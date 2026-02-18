@@ -39,10 +39,11 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
     hashed_password = hash_password(user.password)
 
     new_user = User(
-        email=user.email,
-        password_hash=hashed_password,
-        role=user.role
-    )
+    name=user.name,
+    email=user.email,
+    password_hash=hashed_password,
+    role=user.role
+)
 
     db.add(new_user)
 
@@ -60,6 +61,15 @@ def predict_all(
     current_user: dict = Depends(get_current_user)
 ):
     return analytics_crud.predict_all_students(db)
+
+@router.get("/{student_id}/placement-readiness")
+def placement_readiness(
+    student_id: int,
+    db: Session = Depends(get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    return analytics_crud.get_placement_readiness(db, student_id)
+
 
 @router.get('/{student_id}/marks')
 def get_marks(student_id: int, db: Session = Depends(get_db)):

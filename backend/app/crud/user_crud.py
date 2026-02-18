@@ -5,18 +5,20 @@ from app.core.security import hash_password
 
 def create_user(db: Session, email: str, password_hash: str, role: str):
 
-    user = User(
-        email=email,
-        password_hash=hash_password(user.password_hash),
-        role=role
-    )
+    new_user = User(
+    name=User.name,
+    email=User.email,
+    password_hash=hash_password,
+    role=User.role
+)
 
-    db.add(user)
+
+    db.add(new_user)
 
     try:
         db.commit()
-        db.refresh(user)
-        return user
+        db.refresh(new_user)
+        return new_user
     except IntegrityError:
         db.rollback()
         return None

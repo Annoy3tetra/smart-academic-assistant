@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr, Field
+from typing import Literal
 
 class StudentCreate(BaseModel):
     user_id : int
@@ -15,9 +16,10 @@ class MarkCreate(BaseModel):
     score : float
     
 class UserCreate(BaseModel):
-    email : str
-    password : str
-    role : str
+    name : str
+    email : EmailStr
+    password: str = Field(min_length=6)
+    role : Literal["student","admin"]
     
 class AttendanceCreate(BaseModel):
     student_id : int
