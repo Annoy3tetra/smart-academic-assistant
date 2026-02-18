@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Prep Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --bg-color: #f3f4f8;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: #2d3436;
+            padding-bottom: 50px;
+        }
+
+        .custom-card {
+            background: white;
+            border: none;
+            border-radius: var(--card-radius);
+            padding: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            height: 100%;
+        }
+
+        /* Progress Bar Styles */
+        .progress-thin {
+            height: 8px;
+            border-radius: 4px;
+            background-color: #eee;
+        }
+
+        /* Topic Item Style */
+        .topic-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: background 0.2s;
+        }
+        .topic-item:hover {
+            background-color: #f9f9f9;
+        }
+        .topic-item:last-child {
+            border-bottom: none;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+        }
+
+        /* Circular Progress for Header */
+        .circle-stat {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid p-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold m-0">Preparation Tracker</h2>
+                <p class="text-muted small">Track your topic-wise mastery level.</p>
+            </div>
+            <div class="d-flex align-items-center bg-white px-4 py-2 rounded-pill shadow-sm">
+                <div class="me-3 text-end">
+                    <small class="d-block text-muted fw-bold" style="font-size: 0.7rem;">TOTAL SOLVED</small>
+                    <span class="fw-bold fs-5 text-primary">450 Questions</span>
+                </div>
+                <i class="bi bi-trophy-fill fs-2 text-warning"></i>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            
+            <div class="col-lg-6">
+                <div class="custom-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary bg-opacity-10 p-2 rounded-3 text-primary me-3"><i class="bi bi-code-square fs-4"></i></div>
+                            <h5 class="fw-bold m-0">DSA Roadmap</h5>
+                        </div>
+                        <span class="badge bg-primary rounded-pill">65% Done</span>
+                    </div>
+
+                    <div class="accordion accordion-flush" id="dsaAccordion">
+                        
+                        <div class="accordion-item border-0 mb-3 rounded-3 overflow-hidden shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold bg-light collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseOne">
+                                    Arrays & Strings
+                                    <span class="ms-auto badge bg-success me-3">8/10 Done</span>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseOne" class="accordion-collapse collapse" data-bs-parent="#dsaAccordion">
+                                <div class="accordion-body p-0">
+                                    <div class="topic-item">
+                                        <label class="form-check-label stretched-link" for="check1">Kadane's Algorithm</label>
+                                        <input class="form-check-input" type="checkbox" id="check1" checked>
+                                    </div>
+                                    <div class="topic-item">
+                                        <label class="form-check-label stretched-link" for="check2">Two Pointer Technique</label>
+                                        <input class="form-check-input" type="checkbox" id="check2" checked>
+                                    </div>
+                                    <div class="topic-item">
+                                        <label class="form-check-label stretched-link" for="check3">Sliding Window</label>
+                                        <input class="form-check-input" type="checkbox" id="check3">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3 rounded-3 overflow-hidden shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold bg-light collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseTwo">
+                                    Linked Lists
+                                    <span class="ms-auto badge bg-warning text-dark me-3">3/8 Done</span>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseTwo" class="accordion-collapse collapse" data-bs-parent="#dsaAccordion">
+                                <div class="accordion-body p-0">
+                                    <div class="topic-item">
+                                        <label class="form-check-label" for="checkLL1">Reverse a Linked List</label>
+                                        <input class="form-check-input" type="checkbox" id="checkLL1" checked>
+                                    </div>
+                                    <div class="topic-item">
+                                        <label class="form-check-label" for="checkLL2">Detect Cycle (Floyd's)</label>
+                                        <input class="form-check-input" type="checkbox" id="checkLL2">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="accordion-item border-0 mb-3 rounded-3 overflow-hidden shadow-sm">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button fw-bold bg-light collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapseThree">
+                                    Graphs & Trees
+                                    <span class="ms-auto badge bg-danger me-3">1/15 Done</span>
+                                </button>
+                            </h2>
+                            <div id="flush-collapseThree" class="accordion-collapse collapse" data-bs-parent="#dsaAccordion">
+                                <div class="accordion-body p-0">
+                                    <div class="topic-item">
+                                        <label class="form-check-label">BFS / DFS Traversals</label>
+                                        <input class="form-check-input" type="checkbox" checked>
+                                    </div>
+                                    <div class="topic-item">
+                                        <label class="form-check-label">Dijkstra's Algorithm</label>
+                                        <input class="form-check-input" type="checkbox">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+                
+                <div class="custom-card mb-4">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <div class="d-flex align-items-center">
+                            <div class="bg-warning bg-opacity-10 p-2 rounded-3 text-warning me-3"><i class="bi bi-calculator fs-4"></i></div>
+                            <h5 class="fw-bold m-0">Aptitude & Logical</h5>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-bold small">Quantitative (Maths)</span>
+                            <span class="small fw-bold text-muted">40%</span>
+                        </div>
+                        <div class="progress progress-thin mb-2">
+                            <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"></div>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.8rem;">Focus Areas: Time & Work, Probability</small>
+                    </div>
+
+                    <div class="mb-2">
+                        <div class="d-flex justify-content-between mb-1">
+                            <span class="fw-bold small">Logical Reasoning</span>
+                            <span class="small fw-bold text-muted">85%</span>
+                        </div>
+                        <div class="progress progress-thin mb-2">
+                            <div class="progress-bar bg-success" role="progressbar" style="width: 85%"></div>
+                        </div>
+                        <small class="text-muted" style="font-size: 0.8rem;">Strong! Just practice puzzles.</small>
+                    </div>
+                </div>
+
+                <div class="custom-card">
+                    <h5 class="fw-bold mb-3">CS Fundamentals (Interview Prep)</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span><i class="bi bi-hdd-network me-2 text-primary"></i> Operating Systems</span>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill">Revise</button>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span><i class="bi bi-database me-2 text-primary"></i> DBMS (SQL)</span>
+                            <button class="btn btn-sm btn-outline-primary rounded-pill">Revise</button>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center border-0 px-0">
+                            <span><i class="bi bi-globe me-2 text-primary"></i> Computer Networks</span>
+                            <button class="btn btn-sm btn-outline-success rounded-pill"><i class="bi bi-check-lg"></i> Done</button>
+                        </li>
+                    </ul>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

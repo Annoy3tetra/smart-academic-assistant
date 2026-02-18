@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary-color: #6c5ce7; --bg-color: #f3f4f8; --card-radius: 20px; }
+        body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: #555; padding-bottom: 50px; }
+        
+        .custom-card {
+            background: white; border: none; border-radius: var(--card-radius);
+            padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); height: 100%;
+            transition: transform 0.3s;
+        }
+        .custom-card:hover { transform: translateY(-5px); }
+
+        /* Hackathon Special Gradients */
+        .gradient-card-1 { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; }
+        .gradient-card-2 { background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%); color: white; }
+        
+        .search-input { border: none; background-color: #ffffff; border-radius: 15px; padding: 10px 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
+        .badge-soft-success { background-color: #d1e7dd; color: #0f5132; }
+        .badge-soft-warning { background-color: #fff3cd; color: #664d03; }
+    </style>
+</head>
+<body>
+    <div class="container-fluid p-4">
+        
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <h2 class="fw-bold m-0" style="color: #2d3436;">Hello, Shivam! 👋</h2>
+                <p class="text-muted small">Your academic performance is looking great today.</p>
+            </div>
+            <div class="d-flex gap-3 align-items-center">
+                <div class="bg-white rounded-pill px-3 py-2 shadow-sm d-flex align-items-center">
+                    <i class="bi bi-search text-muted me-2"></i>
+                    <input type="text" style="border:none; outline:none;" placeholder="Search for courses...">
+                </div>
+                <button class="btn btn-white shadow-sm rounded-circle p-2"><i class="bi bi-bell-fill text-primary"></i></button>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <div class="col-md-4">
+                <div class="custom-card gradient-card-1 position-relative overflow-hidden">
+                    <div class="position-relative z-1">
+                        <h5 class="mb-1">Placement Readiness</h5>
+                        <small class="opacity-75">Based on DSA & Projects</small>
+                        <h2 class="mt-3 fw-bold">78%</h2>
+                        <div class="progress mt-3" style="height: 6px; background: rgba(255,255,255,0.3);">
+                            <div class="progress-bar bg-white" role="progressbar" style="width: 78%"></div>
+                        </div>
+                    </div>
+                    <i class="bi bi-briefcase-fill position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="custom-card gradient-card-2 position-relative overflow-hidden">
+                    <div class="position-relative z-1">
+                        <h5 class="mb-1">Attendance</h5>
+                        <small class="opacity-75">Target: 75%</small>
+                        <h2 class="mt-3 fw-bold">82%</h2>
+                        <span class="badge bg-white text-danger mt-2 rounded-pill px-3">Safe Zone</span>
+                    </div>
+                    <i class="bi bi-person-check-fill position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="custom-card d-flex align-items-center justify-content-between">
+                    <div>
+                        <h5 class="text-muted mb-1">Current CGPA</h5>
+                        <h2 class="fw-bold text-dark m-0">8.4</h2>
+                        <small class="text-success"><i class="bi bi-arrow-up"></i> +0.2 from last sem</small>
+                    </div>
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: #dfe6e9; display:flex; align-items:center; justify-content:center;">
+                        <i class="bi bi-trophy-fill fs-2 text-warning"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            
+            <div class="col-lg-8">
+                <div class="custom-card">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h6 class="fw-bold m-0"><i class="bi bi-stars text-warning me-2"></i>AI Recommended Learning</h6>
+                        <a href="#" class="text-decoration-none small fw-bold">View All</a>
+                    </div>
+                    
+                    <div class="d-flex flex-column gap-3">
+                        <div class="d-flex align-items-center p-3 rounded-3 bg-light">
+                            <div class="bg-white p-2 rounded-3 shadow-sm me-3 text-primary fs-4"><i class="bi bi-filetype-py"></i></div>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold m-0">Advanced Python for Data Science</h6>
+                                <small class="text-muted">High probability of appearing in next Sessional</small>
+                            </div>
+                            <button class="btn btn-sm btn-dark rounded-pill px-3">Start</button>
+                        </div>
+                        
+                        <div class="d-flex align-items-center p-3 rounded-3 bg-light">
+                            <div class="bg-white p-2 rounded-3 shadow-sm me-3 text-danger fs-4"><i class="bi bi-diagram-3"></i></div>
+                            <div class="flex-grow-1">
+                                <h6 class="fw-bold m-0">Graph Algorithms (DSA)</h6>
+                                <small class="text-muted">Crucial for Amazon placement prep</small>
+                            </div>
+                            <button class="btn btn-sm btn-dark rounded-pill px-3">Start</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="custom-card">
+                    <h6 class="fw-bold mb-4">Upcoming Deadlines</h6>
+                    
+                    <div class="timeline">
+                        <div class="d-flex gap-3 mb-3">
+                            <div class="d-flex flex-column align-items-center">
+                                <span class="badge bg-danger rounded-circle p-1" style="width:10px; height:10px;"> </span>
+                                <div class="h-100 border-start border-2 mt-1"></div>
+                            </div>
+                            <div>
+                                <h6 class="m-0 fw-bold">AI Project Submission</h6>
+                                <small class="text-muted d-block mb-1">Tomorrow, 11:59 PM</small>
+                                <span class="badge badge-soft-warning">High Priority</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-3">
+                            <div class="d-flex flex-column align-items-center">
+                                <span class="badge bg-primary rounded-circle p-1" style="width:10px; height:10px;"> </span>
+                            </div>
+                            <div>
+                                <h6 class="m-0 fw-bold">COA Sessional Exam</h6>
+                                <small class="text-muted d-block mb-1">18 Feb 2026</small>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

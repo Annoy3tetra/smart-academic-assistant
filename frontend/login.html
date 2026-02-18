@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ScholarAI</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { background: #f3f4f8; height: 100vh; display: flex; align-items: center; justify-content: center; font-family: 'Poppins', sans-serif; }
+        .login-card { width: 100%; max-width: 400px; padding: 30px; border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
+        .btn-primary { background-color: #6c5ce7; border: none; transition: 0.3s; }
+        .btn-primary:hover { background-color: #5b4cc4; }
+        .form-control:focus, .form-select:focus { border-color: #6c5ce7; box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25); }
+        
+        /* Transition for switching modes */
+        .mode-title { transition: opacity 0.3s; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="card login-card">
+        <div class="text-center mb-4">
+            <h3 class="fw-bold text-primary"><i class="bi bi-mortarboard-fill me-2"></i>ScholarAI</h3>
+            <p class="text-muted small mode-title" id="formTitle">Welcome back, Sir.</p>
+        </div>
+
+        <form id="authForm">
+            <div class="mb-3 hidden" id="nameField">
+                <label class="form-label">Full Name</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-person"></i></span>
+                    <input type="text" class="form-control border-start-0 ps-0" id="fullName" placeholder="e.g. Shivam Mishra">
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Email Address</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-envelope"></i></span>
+                    <input type="email" class="form-control border-start-0 ps-0" id="email" placeholder="name@example.com" required>
+                </div>
+            </div>
+
+            <div class="mb-3 hidden" id="roleField">
+                <label class="form-label">I am a...</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-person-badge"></i></span>
+                    <select class="form-select border-start-0 ps-0" id="role">
+                        <option value="Student" selected>Student</option>
+                        <option value="Admin">Professor / Admin</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Password</label>
+                <div class="input-group">
+                    <span class="input-group-text bg-light border-end-0"><i class="bi bi-key"></i></span>
+                    <input type="password" class="form-control border-start-0 ps-0" id="password" required>
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100 py-2 fw-bold" id="submitBtn">Sign In</button>
+        </form>
+
+        <div class="text-center mt-3">
+            <small class="text-muted" id="toggleText">New here? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Create Account</a></small>
+        </div>
+        
+        <div id="status-msg" class="alert mt-3 d-none p-2 small text-center"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        // Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
+            authDomain: "testing-c2417.firebaseapp.com",
+            projectId: "testing-c2417",
+            storageBucket: "testing-c2417.firebasestorage.app",
+            messagingSenderId: "27724276111",
+            appId: "1:27724276111:web:a289d7642e1227818d6bfa",
+            measurementId: "G-KTK16HRSX4"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // UI State Variables
+        let isLoginMode = true;
+        const form = document.getElementById('authForm');
+        const statusMsg = document.getElementById('status-msg');
+
+        // Toggle Login / Signup Mode
+        document.getElementById('toggleBtn').addEventListener('click', (e) => {
+            e.preventDefault();
+            isLoginMode = !isLoginMode;
+            updateUI();
+        });
+
+        function updateUI() {
+            const nameField = document.getElementById('nameField');
+            const roleField = document.getElementById('roleField');
+            const formTitle = document.getElementById('formTitle');
+            const submitBtn = document.getElementById('submitBtn');
+            const toggleText = document.getElementById('toggleText');
+            const toggleBtn = document.getElementById('toggleBtn');
+
+            if (isLoginMode) {
+                // Switch to Login View
+                nameField.classList.add('hidden');
+                roleField.classList.add('hidden');
+                formTitle.textContent = "Welcome back, Sir.";
+                submitBtn.textContent = "Sign In";
+                toggleText.innerHTML = 'New here? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Create Account</a>';
+            } else {
+                // Switch to Signup View
+                nameField.classList.remove('hidden');
+                roleField.classList.remove('hidden');
+                formTitle.textContent = "Create your Academic ID";
+                submitBtn.textContent = "Sign Up";
+                toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Login</a>';
+            }
+            // Re-attach listener since innerHTML replaced the element
+            document.getElementById('toggleBtn').addEventListener('click', (e) => {
+                e.preventDefault();
+                isLoginMode = !isLoginMode;
+                updateUI();
+            });
+            statusMsg.classList.add('d-none');
+        }
+
+        // Handle Form Submission
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const fullName = document.getElementById('fullName').value;
+            const role = document.getElementById('role').value;
+
+            statusMsg.classList.remove('d-none', 'alert-danger', 'alert-success');
+            statusMsg.classList.add('alert-info');
+            statusMsg.textContent = isLoginMode ? "Authenticating..." : "Creating Account...";
+
+            try {
+                if (isLoginMode) {
+                    // LOGIN LOGIC
+                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+                    statusMsg.classList.replace('alert-info', 'alert-success');
+                    statusMsg.textContent = "Login Successful! Redirecting...";
+                    setTimeout(() => window.location.href = "index.html", 1000);
+                } 
+                else {
+                    // SIGNUP LOGIC
+                    if (!fullName) throw new Error("Please enter your full name.");
+
+                    // 1. Create Authentication User
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const user = userCredential.user;
+
+                    // 2. Save Extra Details (Name, Role) to Firestore
+                    await setDoc(doc(db, "users", user.uid), {
+                        name: fullName,
+                        email: email,
+                        role: role,
+                        createdAt: new Date()
+                    });
+
+                    statusMsg.classList.replace('alert-info', 'alert-success');
+                    statusMsg.textContent = "Account Created! Redirecting...";
+                    setTimeout(() => window.location.href = "index.html", 1500);
+                }
+            } catch (error) {
+                console.error(error);
+                statusMsg.classList.replace('alert-info', 'alert-danger');
+                statusMsg.textContent = formatErrorMessage(error.message);
+            }
+        });
+
+        // Helper to make Firebase errors readable
+        function formatErrorMessage(msg) {
+            if (msg.includes("auth/email-already-in-use")) return "Email is already registered.";
+            if (msg.includes("auth/weak-password")) return "Password should be at least 6 characters.";
+            if (msg.includes("auth/invalid-credential")) return "Invalid Email or Password.";
+            return msg.replace("Firebase: ", "");
+        }
+
+    </script>
+</body>
+</html>

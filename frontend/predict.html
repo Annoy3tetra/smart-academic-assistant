@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Future Mark Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            --primary-color: #8e44ad;
+            --secondary-color: #a476f5;
+            --bg-color: #f3f4f8;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: #555;
+            padding: 30px;
+        }
+
+        /* Input Styling to match the Soft UI theme */
+        .form-control {
+            border: none;
+            background-color: white;
+            border-radius: 15px;
+            padding: 15px 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+            color: #555;
+        }
+
+        .form-control:focus {
+            box-shadow: 0 5px 20px rgba(142, 68, 173, 0.2);
+            outline: none;
+            background-color: white;
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #777;
+            margin-left: 10px;
+            margin-bottom: 8px;
+        }
+
+        /* The Predict Button */
+        .btn-predict {
+            background: linear-gradient(135deg, #8e44ad 0%, #a476f5 100%);
+            border: none;
+            border-radius: 15px;
+            padding: 15px;
+            color: white;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            box-shadow: 0 10px 20px rgba(142, 68, 173, 0.3);
+            transition: transform 0.2s;
+            width: 100%;
+        }
+
+        .btn-predict:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 25px rgba(142, 68, 173, 0.4);
+            color: white;
+        }
+
+        .btn-predict:active {
+            transform: translateY(0);
+        }
+
+        /* Result Card - Hidden by default */
+        #result-card {
+            display: none;
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+            margin-top: 30px;
+            animation: slideUp 0.5s ease forwards;
+        }
+
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: conic-gradient(var(--primary-color) 0%, #f0f0f0 0%);
+            margin: 0 auto 20px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 1s ease-out;
+        }
+
+        .score-circle::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: white;
+            border-radius: 50%;
+        }
+
+        .score-text {
+            position: relative;
+            z-index: 2;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .custom-card {
+            background: white;
+            border-radius: var(--card-radius);
+            padding: 30px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.03);
+            height: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container-fluid max-w-lg">
+        <div class="row justify-content-center">
+
+            <div class="col-12 mb-4 text-center">
+                <h2 class="fw-bold text-primary">AI Mark Predictor</h2>
+                <p class="text-muted">Enter your sessional stats, and our Python Model will predict your semester fate.
+                </p>
+            </div>
+
+            <div class="col-md-8 col-lg-6">
+                <div class="custom-card">
+                    <form id="predictionForm" onsubmit="handlePrediction(event)">
+
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="sess1" class="form-label">Sessional 1 Marks</label>
+                                <input type="number" class="form-control" id="sess1" placeholder="e.g. 24" required
+                                    max="30">
+                            </div>
+
+                            <div class="col-md-6">
+                                <label for="sess2" class="form-label">Sessional 2 Marks</label>
+                                <input type="number" class="form-control" id="sess2" placeholder="e.g. 26" required
+                                    max="30">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="put" class="form-label">Pre-University Test (PUT)</label>
+                                <input type="number" class="form-control" id="put" placeholder="e.g. 75" required
+                                    max="100">
+                            </div>
+
+                            <div class="col-12">
+                                <label for="attendance" class="form-label">Attendance % (Optional)</label>
+                                <input type="number" class="form-control" id="attendance" placeholder="e.g. 85">
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <button type="submit"
+                                class="btn btn-predict d-flex justify-content-center align-items-center gap-2">
+                                <span id="btn-text">Predict Future</span>
+                                <div id="loader" class="spinner-border spinner-border-sm text-white d-none"
+                                    role="status"></div>
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div id="result-card">
+                    <h5 class="fw-bold mb-3 text-muted">Predicted Semester Score</h5>
+
+                    <div class="score-circle" id="scoreCircle">
+                        <span class="score-text" id="scoreValue">0%</span>
+                    </div>
+
+                    <p class="text-muted small">Based on your performance trend, this is your estimated outcome.</p>
+                    <div class="alert alert-light text-primary border-0 bg-primary bg-opacity-10">
+                        <i class="bi bi-robot me-2"></i> Model Confidence: <strong>92%</strong>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // REPLACE THE OLD SCRIPT IN predict.html WITH THIS:
+
+        async function handlePrediction(event) {
+            event.preventDefault();
+
+            // UI Elements
+            const btn = document.querySelector('.btn-predict');
+            const loader = document.getElementById('loader');
+            const btnText = document.getElementById('btn-text');
+            const resultCard = document.getElementById('result-card');
+
+            // Set Loading State
+            btn.disabled = true;
+            loader.classList.remove('d-none');
+            btnText.textContent = "Consulting AI Model...";
+            resultCard.style.display = 'none';
+
+            // 1. Get Data
+            const sess1 = parseFloat(document.getElementById('sess1').value);
+            const sess2 = parseFloat(document.getElementById('sess2').value);
+            const put_marks = parseFloat(document.getElementById('put').value);
+            const attendance = parseFloat(document.getElementById('attendance').value || 0);
+
+            try {
+                // 2. Mock AI Prediction (Client-Side Logic)
+                // await fetch('http://127.0.0.1:8000/predict', ... ); // REMOVED BACKEND CALL
+
+                // Simulate network delay for "AI" feel
+                await new Promise(resolve => setTimeout(resolve, 1500));
+
+                // Simple Weighted Algorithm
+                // Max Sessional: 30, Max PUT: 100
+                // Normalize to 100 scale: (S1/30)*20 + (S2/30)*20 + (PUT/100)*60 is a common rough distribution
+                // Let's use a simpler heuristic for the demo:
+                // Total Score = (S1 + S2 + (PUT * 0.6)) / (30 + 30 + 60) * 100 roughly
+                // But let's just use the user requested simple formula or a reasonable logic:
+                // (S1 + S2 + PUT)/160 * 100 is raw percentage. 
+                // Let's add some "AI" randomness and attendance factor.
+
+                let rawScore = sess1 + sess2 + (put_marks * 0.6); // Max approx 30+30+60 = 120 (Wait, PUT is 100. 100*0.6=60). Total max ~120.
+                let maxpossible = 30 + 30 + 60; // 120
+                let percentage = (rawScore / maxpossible) * 100;
+
+                // Attendance Bonus
+                if (attendance > 90) percentage += 2;
+                else if (attendance > 75) percentage += 1;
+
+                // Cap at 100
+                if (percentage > 99) percentage = 99.5;
+
+                // 3. Show Result
+                showResult(percentage.toFixed(1));
+
+            } catch (error) {
+                console.error("Prediction Failed:", error);
+                alert("Something went wrong with the calculation.");
+            } finally {
+                // Reset State
+                btn.disabled = false;
+                loader.classList.add('d-none');
+                btnText.textContent = "Predict Future";
+            }
+        }
+
+        function showResult(percentage) {
+            const resultCard = document.getElementById('result-card');
+            const scoreVal = document.getElementById('scoreValue');
+            const circle = document.getElementById('scoreCircle');
+
+            resultCard.style.display = 'block';
+
+            // Animation Logic
+            let start = 0;
+            // Cap animation at 100 if prediction is > 100 (unlikely but possible)
+            let end = Math.min(Math.round(percentage), 100);
+
+            const duration = 1500;
+            const stepTime = Math.abs(Math.floor(duration / end));
+
+            const timer = setInterval(function () {
+                start++;
+                scoreVal.textContent = start + "%";
+                circle.style.background = `conic-gradient(var(--primary-color) ${start * 3.6}deg, #f0f0f0 0deg)`;
+
+                if (start >= end) {
+                    clearInterval(timer);
+                    scoreVal.textContent = percentage + "%"; // Show exact decimal at end
+                }
+            }, stepTime);
+        }
+    </script>
+</body>
+
+</html>

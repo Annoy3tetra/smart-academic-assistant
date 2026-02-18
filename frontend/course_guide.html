@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Guide</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary-color: #6c5ce7;
+            --secondary-color: #a29bfe;
+            --bg-color: #f3f4f8;
+            --card-radius: 20px;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: #2d3436;
+            padding-bottom: 80px;
+        }
+
+        /* Card Styling */
+        .custom-card {
+            background: white;
+            border: none;
+            border-radius: var(--card-radius);
+            padding: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.03);
+            transition: transform 0.3s ease;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .custom-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.15);
+        }
+
+        /* Search Bar */
+        .search-bar {
+            background: white;
+            border-radius: 15px;
+            padding: 10px 20px;
+            border: none;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.03);
+            width: 100%;
+        }
+
+        /* Course Thumbnail Placeholder */
+        .course-thumb {
+            height: 120px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 15px;
+        }
+
+        .thumb-orange { background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%); }
+        .thumb-blue { background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%); }
+        .thumb-green { background: linear-gradient(135deg, #55efc4 0%, #00b894 100%); }
+
+        /* Progress Bar */
+        .progress-micro {
+            height: 6px;
+            border-radius: 3px;
+            background-color: #eee;
+            margin-top: 10px;
+        }
+
+        /* Play Button Overlay */
+        .play-btn {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            color: var(--primary-color);
+            transition: all 0.2s;
+        }
+        .custom-card:hover .play-btn {
+            background: var(--primary-color);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container-fluid p-4">
+        
+        <div class="row align-items-center mb-5">
+            <div class="col-md-6">
+                <h2 class="fw-bold m-0">Course Library</h2>
+                <p class="text-muted small">AI-Curated content for your B.Tech Journey</p>
+            </div>
+            <div class="col-md-6">
+                <div class="position-relative">
+                    <input type="text" class="search-bar" placeholder="Search for subjects, topics, or notes...">
+                    <i class="bi bi-search position-absolute top-50 end-0 translate-middle-y me-3 text-muted"></i>
+                </div>
+            </div>
+        </div>
+
+        <h5 class="fw-bold mb-3"><i class="bi bi-play-circle-fill text-primary me-2"></i>Continue Learning</h5>
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="custom-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary bg-opacity-10 p-3 rounded-3 text-primary me-3">
+                            <i class="bi bi-diagram-3-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold m-0">Data Structures (DSA)</h6>
+                            <small class="text-muted">Unit 3: Graph Traversal</small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center small text-muted">
+                        <span>75% Completed</span>
+                        <span>3h left</span>
+                    </div>
+                    <div class="progress progress-micro">
+                        <div class="progress-bar bg-primary" role="progressbar" style="width: 75%"></div>
+                    </div>
+                    <button class="btn btn-sm btn-primary w-100 mt-3 rounded-pill">Resume</button>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="custom-card">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-warning bg-opacity-10 p-3 rounded-3 text-warning me-3">
+                            <i class="bi bi-cpu-fill fs-4"></i>
+                        </div>
+                        <div>
+                            <h6 class="fw-bold m-0">COA Architecture</h6>
+                            <small class="text-muted">Unit 2: Pipelining</small>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between align-items-center small text-muted">
+                        <span>40% Completed</span>
+                        <span>12h left</span>
+                    </div>
+                    <div class="progress progress-micro">
+                        <div class="progress-bar bg-warning" role="progressbar" style="width: 40%"></div>
+                    </div>
+                    <button class="btn btn-sm btn-dark w-100 mt-3 rounded-pill">Resume</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-between align-items-end mb-3">
+            <h5 class="fw-bold m-0"><i class="bi bi-stars text-warning me-2"></i>Recommended for You</h5>
+            <a href="#" class="text-decoration-none small fw-bold">View All</a>
+        </div>
+
+        <div class="row g-4">
+            
+            <div class="col-md-3">
+                <div class="custom-card p-0">
+                    <div class="p-3">
+                        <div class="course-thumb"><i class="bi bi-filetype-py"></i></div>
+                        <span class="badge bg-light text-primary mb-2">Programming</span>
+                        <h6 class="fw-bold mb-1">Python Masterclass</h6>
+                        <small class="text-muted d-block mb-3">Dr. Angela Yu</small>
+                        <div class="d-flex align-items-center text-warning small">
+                            <i class="bi bi-star-fill me-1"></i> 4.8 (1.2k)
+                        </div>
+                    </div>
+                    <div class="play-btn"><i class="bi bi-play-fill fs-4"></i></div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="custom-card p-0">
+                    <div class="p-3">
+                        <div class="course-thumb thumb-orange"><i class="bi bi-motherboard"></i></div>
+                        <span class="badge bg-light text-danger mb-2">Core</span>
+                        <h6 class="fw-bold mb-1">Digital Logic Design</h6>
+                        <small class="text-muted d-block mb-3">Neso Academy</small>
+                        <div class="d-flex align-items-center text-warning small">
+                            <i class="bi bi-star-fill me-1"></i> 4.9 (5k)
+                        </div>
+                    </div>
+                    <div class="play-btn"><i class="bi bi-play-fill fs-4"></i></div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="custom-card p-0">
+                    <div class="p-3">
+                        <div class="course-thumb thumb-green"><i class="bi bi-globe"></i></div>
+                        <span class="badge bg-light text-success mb-2">Development</span>
+                        <h6 class="fw-bold mb-1">Full Stack Web Dev</h6>
+                        <small class="text-muted d-block mb-3">Harkirat Singh</small>
+                        <div class="d-flex align-items-center text-warning small">
+                            <i class="bi bi-star-fill me-1"></i> 4.7 (800)
+                        </div>
+                    </div>
+                    <div class="play-btn"><i class="bi bi-play-fill fs-4"></i></div>
+                </div>
+            </div>
+
+            <div class="col-md-3">
+                <div class="custom-card p-0">
+                    <div class="p-3">
+                        <div class="course-thumb thumb-blue"><i class="bi bi-robot"></i></div>
+                        <span class="badge bg-light text-info mb-2">AIML Special</span>
+                        <h6 class="fw-bold mb-1">Intro to Neural Networks</h6>
+                        <small class="text-muted d-block mb-3">Andrew Ng</small>
+                        <div class="d-flex align-items-center text-warning small">
+                            <i class="bi bi-star-fill me-1"></i> 5.0 (10k)
+                        </div>
+                    </div>
+                    <div class="play-btn"><i class="bi bi-play-fill fs-4"></i></div>
+                </div>
+            </div>
+
+        </div>
+
+        <h5 class="fw-bold mt-5 mb-3">Quick Resources</h5>
+        <div class="row g-3">
+            <div class="col-md-4">
+                <div class="d-flex align-items-center bg-white p-3 rounded-4 shadow-sm">
+                    <div class="bg-danger text-white rounded-circle p-2 me-3"><i class="bi bi-file-pdf-fill"></i></div>
+                    <div>
+                        <h6 class="m-0 fw-bold">AKTU Previous Year Papers</h6>
+                        <small class="text-muted">Last 5 Years</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center bg-white p-3 rounded-4 shadow-sm">
+                    <div class="bg-success text-white rounded-circle p-2 me-3"><i class="bi bi-journal-text"></i></div>
+                    <div>
+                        <h6 class="m-0 fw-bold">Handwritten Notes</h6>
+                        <small class="text-muted">Toppers Copy</small>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="d-flex align-items-center bg-white p-3 rounded-4 shadow-sm">
+                    <div class="bg-info text-white rounded-circle p-2 me-3"><i class="bi bi-camera-video-fill"></i></div>
+                    <div>
+                        <h6 class="m-0 fw-bold">Video Lectures</h6>
+                        <small class="text-muted">YouTube Playlist</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
