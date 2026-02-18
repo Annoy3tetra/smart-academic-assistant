@@ -1,9 +1,21 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
-from app.schemas.schemas_user import StudentCreate, SubjectCreate, MarkCreate, UserCreate, AttendanceCreate,UserLogin
+from app.schemas.schemas_user import (
+    StudentCreate,
+    SubjectCreate,
+    MarkCreate,
+    UserCreate,
+    AttendanceCreate,
+    UserLogin,
+    PredictDirectRequest,
+    CourseRecommendationRequest,
+    CourseRecommendationResponse,
+)
 from app.crud import student_crud,user_crud,analytics_crud
 from app.ai_engine.performance_predictor import predict_performance
+from app.ai_engine.placement_model import evaluate_placement_readiness
+from app.ai_engine.course_recommender import recommend_courses_with_gemini
 from app.models.user import Prediction, User
 from app.core.security import verify_password, create_access_token, get_current_user, hash_password
 from sqlalchemy.exc import IntegrityError
@@ -113,6 +125,52 @@ def predict_student(
         "predicted_score": predicted_score,
         "risk_level": risk
     }
+
+@router.post("/predict-direct")
+def predict_direct(payload: PredictDirectRequest):
+    if len(payload.subject_marks) < 4 or len(payload.subject_marks) > 7:
+        raise HTTPException(status_code=422, detail="subject_marks must contain 4 to 7 values")
+    if any(mark < 0 or mark > 100 for mark in payload.subject_marks):
+        raise HTTPException(status_code=422, detail="Each subject mark must be between 0 and 100")
+
+    total_subjects = len(payload.subject_marks)
+    average_score = sum(payload.subject_marks) / total_subjects
+
+    predicted_score, risk = predict_performance(
+        average_score,
+        payload.attendance,
+        total_subjects
+    )
+    placement_readiness = evaluate_placement_readiness(
+        average_score,
+        payload.attendance,
+        risk
+    )
+
+    return {
+        "average_score": round(float(average_score), 2),
+        "total_subjects": total_subjects,
+        "predicted_score": predicted_score,
+        "risk_level": risk,
+        "placement_readiness": placement_readiness
+    }
+
+
+@router.post("/recommend-courses", response_model=CourseRecommendationResponse)
+def recommend_courses(payload: CourseRecommendationRequest):
+    subjects = [
+        {"name": item.name.strip(), "score": float(item.score)}
+        for item in payload.subjects
+        if item.name.strip()
+    ]
+    if not subjects:
+        raise HTTPException(status_code=422, detail="At least one valid subject is required")
+
+    return recommend_courses_with_gemini(
+        subjects=subjects,
+        attendance=payload.attendance,
+        top_n=payload.top_n,
+    )
 
 @router.post("/login")
 def login(

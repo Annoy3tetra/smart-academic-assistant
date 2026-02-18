@@ -10,7 +10,7 @@
     <style>
         :root { --primary-color: #6c5ce7; --bg-color: #f3f4f8; --card-radius: 20px; }
         body { font-family: 'Poppins', sans-serif; background-color: var(--bg-color); color: #555; padding-bottom: 50px; }
-        
+
         .custom-card {
             background: white; border: none; border-radius: var(--card-radius);
             padding: 25px; box-shadow: 0 5px 20px rgba(0,0,0,0.03); height: 100%;
@@ -18,21 +18,21 @@
         }
         .custom-card:hover { transform: translateY(-5px); }
 
-        /* Hackathon Special Gradients */
         .gradient-card-1 { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; }
         .gradient-card-2 { background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%); color: white; }
-        
+
         .search-input { border: none; background-color: #ffffff; border-radius: 15px; padding: 10px 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .badge-soft-success { background-color: #d1e7dd; color: #0f5132; }
         .badge-soft-warning { background-color: #fff3cd; color: #664d03; }
+        .mark-row .form-control { border-radius: 12px; }
     </style>
 </head>
 <body>
     <div class="container-fluid p-4">
-        
+
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
-                <h2 class="fw-bold m-0" style="color: #2d3436;">Hello, Shivam! 👋</h2>
+                <h2 class="fw-bold m-0" style="color: #2d3436;" id="user-greeting">Hello, Student!</h2>
                 <p class="text-muted small">Your academic performance is looking great today.</p>
             </div>
             <div class="d-flex gap-3 align-items-center">
@@ -49,10 +49,10 @@
                 <div class="custom-card gradient-card-1 position-relative overflow-hidden">
                     <div class="position-relative z-1">
                         <h5 class="mb-1">Placement Readiness</h5>
-                        <small class="opacity-75">Based on DSA & Projects</small>
-                        <h2 class="mt-3 fw-bold">78%</h2>
+                        <small class="opacity-75" id="placement-readiness-label">Loading latest prediction...</small>
+                        <h2 class="mt-3 fw-bold" id="placement-readiness-score">--</h2>
                         <div class="progress mt-3" style="height: 6px; background: rgba(255,255,255,0.3);">
-                            <div class="progress-bar bg-white" role="progressbar" style="width: 78%"></div>
+                            <div class="progress-bar bg-white" role="progressbar" id="placement-readiness-bar" style="width: 0%"></div>
                         </div>
                     </div>
                     <i class="bi bi-briefcase-fill position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
@@ -62,12 +62,12 @@
             <div class="col-md-4">
                 <div class="custom-card gradient-card-2 position-relative overflow-hidden">
                     <div class="position-relative z-1">
-                        <h5 class="mb-1">Attendance</h5>
-                        <small class="opacity-75">Target: 75%</small>
-                        <h2 class="mt-3 fw-bold">82%</h2>
-                        <span class="badge bg-white text-danger mt-2 rounded-pill px-3">Safe Zone</span>
+                        <h5 class="mb-1">Latest Prediction</h5>
+                        <small class="opacity-75">From your most recent run</small>
+                        <h2 class="mt-3 fw-bold" id="predicted-score">--</h2>
+                        <span class="badge bg-white text-danger mt-2 rounded-pill px-3" id="risk-level-badge">Risk: --</span>
                     </div>
-                    <i class="bi bi-person-check-fill position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
+                    <i class="bi bi-graph-up-arrow position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
                 </div>
             </div>
 
@@ -86,70 +86,434 @@
         </div>
 
         <div class="row g-4">
-            
+
             <div class="col-lg-8">
                 <div class="custom-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h6 class="fw-bold m-0"><i class="bi bi-stars text-warning me-2"></i>AI Recommended Learning</h6>
-                        <a href="#" class="text-decoration-none small fw-bold">View All</a>
+                        <small class="text-muted" id="recommendation-model-label">Model: --</small>
                     </div>
-                    
-                    <div class="d-flex flex-column gap-3">
-                        <div class="d-flex align-items-center p-3 rounded-3 bg-light">
-                            <div class="bg-white p-2 rounded-3 shadow-sm me-3 text-primary fs-4"><i class="bi bi-filetype-py"></i></div>
-                            <div class="flex-grow-1">
-                                <h6 class="fw-bold m-0">Advanced Python for Data Science</h6>
-                                <small class="text-muted">High probability of appearing in next Sessional</small>
-                            </div>
-                            <button class="btn btn-sm btn-dark rounded-pill px-3">Start</button>
-                        </div>
-                        
-                        <div class="d-flex align-items-center p-3 rounded-3 bg-light">
-                            <div class="bg-white p-2 rounded-3 shadow-sm me-3 text-danger fs-4"><i class="bi bi-diagram-3"></i></div>
-                            <div class="flex-grow-1">
-                                <h6 class="fw-bold m-0">Graph Algorithms (DSA)</h6>
-                                <small class="text-muted">Crucial for Amazon placement prep</small>
-                            </div>
-                            <button class="btn btn-sm btn-dark rounded-pill px-3">Start</button>
-                        </div>
+
+                    <div id="learning-empty-state" class="alert alert-light border mb-3">
+                        Add your subject marks to get AI course recommendations.
                     </div>
+                    <div id="weak-subjects-chip" class="small text-muted mb-3 d-none"></div>
+                    <div id="learning-list" class="d-flex flex-column gap-3"></div>
                 </div>
             </div>
 
             <div class="col-lg-4">
                 <div class="custom-card">
-                    <h6 class="fw-bold mb-4">Upcoming Deadlines</h6>
-                    
-                    <div class="timeline">
-                        <div class="d-flex gap-3 mb-3">
-                            <div class="d-flex flex-column align-items-center">
-                                <span class="badge bg-danger rounded-circle p-1" style="width:10px; height:10px;"> </span>
-                                <div class="h-100 border-start border-2 mt-1"></div>
-                            </div>
-                            <div>
-                                <h6 class="m-0 fw-bold">AI Project Submission</h6>
-                                <small class="text-muted d-block mb-1">Tomorrow, 11:59 PM</small>
-                                <span class="badge badge-soft-warning">High Priority</span>
-                            </div>
-                        </div>
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h6 class="fw-bold m-0">Subject Marks</h6>
+                        <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="add-mark-row-btn">+ Add</button>
+                    </div>
+                    <small class="text-muted d-block mb-3">Firestore: <code>users/{uid}.subject_marks</code></small>
 
-                        <div class="d-flex gap-3">
-                            <div class="d-flex flex-column align-items-center">
-                                <span class="badge bg-primary rounded-circle p-1" style="width:10px; height:10px;"> </span>
-                            </div>
-                            <div>
-                                <h6 class="m-0 fw-bold">COA Sessional Exam</h6>
-                                <small class="text-muted d-block mb-1">18 Feb 2026</small>
-                            </div>
-                        </div>
+                    <div id="marks-empty-state" class="alert alert-light border mb-3">
+                        No subject marks found. Add subjects and save.
                     </div>
 
+                    <div id="marks-editor" class="d-flex flex-column gap-2 mb-3"></div>
+
+                    <button class="btn btn-dark w-100 rounded-pill" id="save-marks-btn">Save Marks</button>
+                    <div id="marks-status" class="small mt-2 text-muted"></div>
                 </div>
             </div>
 
         </div>
     </div>
-    
+
+    <template id="mark-row-template">
+        <div class="row g-2 mark-row">
+            <div class="col-7">
+                <input type="text" class="form-control subject-name" placeholder="Subject name">
+            </div>
+            <div class="col-4">
+                <input type="number" class="form-control subject-score" min="0" max="100" step="0.1" placeholder="Marks">
+            </div>
+            <div class="col-1 d-flex align-items-center justify-content-end">
+                <button type="button" class="btn btn-sm btn-link text-danger p-0 remove-mark-btn">
+                    <i class="bi bi-x-circle-fill"></i>
+                </button>
+            </div>
+        </div>
+    </template>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
+            authDomain: "testing-c2417.firebaseapp.com",
+            projectId: "testing-c2417",
+            storageBucket: "testing-c2417.firebasestorage.app",
+            messagingSenderId: "27724276111",
+            appId: "1:27724276111:web:a289d7642e1227818d6bfa",
+            measurementId: "G-KTK16HRSX4"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const marksEditor = document.getElementById("marks-editor");
+        const marksEmptyState = document.getElementById("marks-empty-state");
+        const marksStatus = document.getElementById("marks-status");
+        const markRowTemplate = document.getElementById("mark-row-template");
+        const learningList = document.getElementById("learning-list");
+        const learningEmptyState = document.getElementById("learning-empty-state");
+        const weakSubjectsChip = document.getElementById("weak-subjects-chip");
+        const recommendationModelLabel = document.getElementById("recommendation-model-label");
+        const API_BASES = [
+            window.localStorage.getItem("apiBaseUrl"),
+            "http://127.0.0.1:8000",
+            "http://localhost:8000"
+        ].filter(Boolean);
+        let currentUserId = null;
+
+        function setGreeting(user, userData) {
+            const fallbackName = user?.email ? user.email.split("@")[0] : "Student";
+            const displayName = String(userData?.name || user?.displayName || fallbackName || "Student").trim();
+            document.getElementById("user-greeting").textContent = `Hello, ${displayName}!`;
+        }
+
+        function setMarksStatus(message, type = "muted") {
+            marksStatus.className = "small mt-2";
+            if (type === "error") marksStatus.classList.add("text-danger");
+            else if (type === "success") marksStatus.classList.add("text-success");
+            else marksStatus.classList.add("text-muted");
+            marksStatus.textContent = message;
+        }
+
+        function setLearningStatus(message, model = "--") {
+            learningEmptyState.textContent = message;
+            learningEmptyState.classList.remove("d-none");
+            recommendationModelLabel.textContent = `Model: ${model}`;
+            weakSubjectsChip.classList.add("d-none");
+            weakSubjectsChip.textContent = "";
+            learningList.innerHTML = "";
+        }
+
+        function getLearningIcon(subject) {
+            const value = String(subject || "").toLowerCase();
+            if (value.includes("python") || value.includes("program")) return "bi-filetype-py text-primary";
+            if (value.includes("math") || value.includes("algebra")) return "bi-calculator text-success";
+            if (value.includes("dsa") || value.includes("algorithm")) return "bi-diagram-3 text-danger";
+            if (value.includes("network")) return "bi-diagram-2 text-info";
+            return "bi-journal-code text-secondary";
+        }
+
+        function getPriorityBadgeClass(priority) {
+            if (priority === "High") return "bg-danger-subtle text-danger";
+            if (priority === "Medium") return "bg-warning-subtle text-warning";
+            return "bg-success-subtle text-success";
+        }
+
+        function renderLearningRecommendations(data) {
+            const recommendations = Array.isArray(data?.recommendations) ? data.recommendations : [];
+            if (!recommendations.length) {
+                setLearningStatus("No recommendations returned. Update marks and try again.", data?.model_used || "--");
+                return;
+            }
+
+            recommendationModelLabel.textContent = `Model: ${data?.model_used || "--"}`;
+            learningEmptyState.classList.add("d-none");
+            learningList.innerHTML = "";
+
+            const weakSubjects = Array.isArray(data?.weak_subjects) ? data.weak_subjects.filter(Boolean) : [];
+            if (weakSubjects.length) {
+                weakSubjectsChip.classList.remove("d-none");
+                weakSubjectsChip.textContent = `Weak subjects: ${weakSubjects.join(", ")}`;
+            } else {
+                weakSubjectsChip.classList.add("d-none");
+                weakSubjectsChip.textContent = "";
+            }
+
+            recommendations.forEach((item) => {
+                const wrapper = document.createElement("div");
+                wrapper.className = "d-flex align-items-center p-3 rounded-3 bg-light";
+                const safeUrl = item.course_url ? String(item.course_url) : "";
+                const actionHtml = safeUrl
+                    ? `<a class="btn btn-sm btn-dark rounded-pill px-3" href="${safeUrl}" target="_blank" rel="noopener noreferrer">Start</a>`
+                    : `<button class="btn btn-sm btn-secondary rounded-pill px-3" disabled>Start</button>`;
+                wrapper.innerHTML = `
+                    <div class="bg-white p-2 rounded-3 shadow-sm me-3 fs-4"><i class="bi ${getLearningIcon(item.focus_subject)}"></i></div>
+                    <div class="flex-grow-1">
+                        <h6 class="fw-bold m-0">${item.title}</h6>
+                        <small class="text-muted d-block">${item.reason}</small>
+                        <small class="text-muted">Focus: ${item.focus_subject} | Provider: ${item.provider || "--"} | Level: ${item.level} | ${item.estimated_hours} hrs</small>
+                    </div>
+                    ${actionHtml}
+                    <span class="badge rounded-pill ${getPriorityBadgeClass(item.priority)}">${item.priority}</span>
+                `;
+                learningList.appendChild(wrapper);
+            });
+        }
+
+        function normalizeSubjectMarks(userData) {
+            const raw = userData?.subject_marks ?? userData?.subjectMarks ?? userData?.marks;
+            if (!raw) return [];
+
+            if (Array.isArray(raw)) {
+                return raw.map((entry, index) => {
+                    if (typeof entry === "number" || typeof entry === "string") {
+                        const parsed = Number(entry);
+                        return { subject: `Subject ${index + 1}`, mark: Number.isFinite(parsed) ? parsed : "" };
+                    }
+
+                    if (entry && typeof entry === "object") {
+                        const subject = String(entry.subject ?? entry.name ?? `Subject ${index + 1}`).trim();
+                        const parsed = Number(entry.mark ?? entry.marks ?? entry.score);
+                        return { subject, mark: Number.isFinite(parsed) ? parsed : "" };
+                    }
+
+                    return { subject: `Subject ${index + 1}`, mark: "" };
+                });
+            }
+
+            if (typeof raw === "object") {
+                return Object.entries(raw).map(([subject, value]) => {
+                    const parsed = Number(value);
+                    return { subject: String(subject), mark: Number.isFinite(parsed) ? parsed : "" };
+                });
+            }
+
+            return [];
+        }
+
+        function updateMarksEmptyState() {
+            marksEmptyState.classList.toggle("d-none", marksEditor.children.length > 0);
+        }
+
+        function addMarkRow(subject = "", mark = "") {
+            const row = markRowTemplate.content.firstElementChild.cloneNode(true);
+            row.querySelector(".subject-name").value = subject;
+            row.querySelector(".subject-score").value = mark === "" ? "" : Number(mark);
+            marksEditor.appendChild(row);
+            updateMarksEmptyState();
+        }
+
+        function renderMarksEditor(subjectMarks) {
+            marksEditor.innerHTML = "";
+            if (!subjectMarks.length) {
+                updateMarksEmptyState();
+                setMarksStatus("", "muted");
+                return;
+            }
+
+            subjectMarks.forEach((item) => addMarkRow(item.subject, item.mark));
+            setMarksStatus("", "muted");
+        }
+
+        function collectMarksPayload() {
+            const rows = Array.from(marksEditor.querySelectorAll(".mark-row"));
+            const payload = {};
+
+            rows.forEach((row) => {
+                const subject = row.querySelector(".subject-name").value.trim();
+                const scoreValue = row.querySelector(".subject-score").value.trim();
+
+                if (!subject && !scoreValue) return;
+                if (!subject || !scoreValue) throw new Error("Har row me subject aur marks dono bharna zaruri hai.");
+
+                const score = Number(scoreValue);
+                if (!Number.isFinite(score) || score < 0 || score > 100) {
+                    throw new Error(`Invalid marks for ${subject}. Marks 0 se 100 ke beech hone chahiye.`);
+                }
+
+                payload[subject] = Number(score.toFixed(1));
+            });
+
+            return payload;
+        }
+
+        async function requestCourseRecommendations(subjects) {
+            let lastError = null;
+
+            for (const base of API_BASES) {
+                try {
+                    const response = await fetch(`${base}/students/recommend-courses`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            subjects,
+                            top_n: 4
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        throw new Error(errorText || `Request failed with status ${response.status}`);
+                    }
+
+                    return await response.json();
+                } catch (error) {
+                    lastError = error;
+                }
+            }
+
+            throw lastError || new Error("Recommendation service unavailable");
+        }
+
+        async function loadLearningRecommendations(subjectMarks) {
+            const subjects = (subjectMarks || [])
+                .filter((item) => item?.subject && Number.isFinite(Number(item?.mark)))
+                .map((item) => ({ name: item.subject, score: Number(item.mark) }));
+
+            if (!subjects.length) {
+                setLearningStatus("Add your subject marks to get AI course recommendations.", "--");
+                return;
+            }
+
+            setLearningStatus("Generating personalized recommendations...", "loading");
+            try {
+                const data = await requestCourseRecommendations(subjects);
+                renderLearningRecommendations(data);
+            } catch (error) {
+                console.error("Failed to load course recommendations:", error);
+                setLearningStatus("Recommendations unavailable right now. Try again after saving marks.", "error");
+            }
+        }
+
+        async function saveSubjectMarks() {
+            if (!currentUserId) {
+                setMarksStatus("User session nahi mila. Dubara login karein.", "error");
+                return;
+            }
+
+            try {
+                const subjectMarks = collectMarksPayload();
+                await setDoc(doc(db, "users", currentUserId), {
+                    subject_marks: subjectMarks,
+                    marks_updated_at: serverTimestamp()
+                }, { merge: true });
+
+                const normalized = normalizeSubjectMarks({ subject_marks: subjectMarks });
+                renderMarksEditor(normalized);
+                await loadLearningRecommendations(normalized);
+                setMarksStatus("Marks successfully save ho gaye.", "success");
+            } catch (error) {
+                console.error("Failed to save marks:", error);
+                setMarksStatus(error.message || "Marks save nahi ho paaye.", "error");
+            }
+        }
+
+        async function loadUserMarksAndProfile(user) {
+            const snap = await getDoc(doc(db, "users", user.uid));
+            const userData = snap.exists() ? snap.data() : {};
+            setGreeting(user, userData);
+            const normalized = normalizeSubjectMarks(userData);
+            renderMarksEditor(normalized);
+            await loadLearningRecommendations(normalized);
+        }
+
+        function readinessToPercent(readiness) {
+            if (readiness === "READY") return 85;
+            if (readiness === "MODERATE") return 60;
+            return 30;
+        }
+
+        function applyRiskBadge(riskLevel) {
+            const riskBadge = document.getElementById("risk-level-badge");
+            riskBadge.textContent = `Risk: ${riskLevel || "--"}`;
+            riskBadge.classList.remove("text-danger", "text-warning", "text-success");
+
+            if (riskLevel === "HIGH") {
+                riskBadge.classList.add("text-danger");
+            } else if (riskLevel === "MEDIUM") {
+                riskBadge.classList.add("text-warning");
+            } else if (riskLevel === "LOW") {
+                riskBadge.classList.add("text-success");
+            } else {
+                riskBadge.classList.add("text-danger");
+            }
+        }
+
+        function renderPrediction(docData) {
+            const predictedScore = document.getElementById("predicted-score");
+            const readinessLabel = document.getElementById("placement-readiness-label");
+            const readinessScore = document.getElementById("placement-readiness-score");
+            const readinessBar = document.getElementById("placement-readiness-bar");
+
+            const score = Number(docData?.predicted_score);
+            predictedScore.textContent = Number.isFinite(score) ? `${score.toFixed(1)}%` : "--";
+
+            const readiness = docData?.placement_readiness || "NOT READY";
+            const readinessPercent = readinessToPercent(readiness);
+            readinessLabel.textContent = `Status: ${readiness}`;
+            readinessScore.textContent = `${readinessPercent}%`;
+            readinessBar.style.width = `${readinessPercent}%`;
+
+            applyRiskBadge(docData?.risk_level);
+        }
+
+        function getCreatedAtValue(data) {
+            const createdAt = data?.created_at;
+            if (!createdAt) return 0;
+            if (typeof createdAt.toMillis === "function") return createdAt.toMillis();
+            const dateValue = new Date(createdAt).getTime();
+            return Number.isFinite(dateValue) ? dateValue : 0;
+        }
+
+        async function loadLatestPrediction(uid) {
+            const predictionsRef = collection(db, "predictions");
+            const q = query(predictionsRef, where("user_id", "==", uid));
+            const snapshot = await getDocs(q);
+
+            if (snapshot.empty) {
+                renderPrediction(null);
+                return;
+            }
+
+            let latest = null;
+            let latestTs = -1;
+
+            snapshot.forEach((docSnap) => {
+                const data = docSnap.data();
+                const ts = getCreatedAtValue(data);
+                if (ts > latestTs) {
+                    latestTs = ts;
+                    latest = data;
+                }
+            });
+
+            renderPrediction(latest);
+        }
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) {
+                currentUserId = null;
+                setGreeting(null, null);
+                renderMarksEditor([]);
+                setLearningStatus("Login required for recommendations.", "--");
+                renderPrediction(null);
+                return;
+            }
+
+            try {
+                currentUserId = user.uid;
+                await Promise.all([
+                    loadLatestPrediction(user.uid),
+                    loadUserMarksAndProfile(user)
+                ]);
+            } catch (error) {
+                console.error("Failed to load dashboard data:", error);
+                renderPrediction(null);
+                setMarksStatus("Marks load nahi ho paaye.", "error");
+            }
+        });
+
+        document.getElementById("add-mark-row-btn").addEventListener("click", () => addMarkRow());
+        document.getElementById("save-marks-btn").addEventListener("click", saveSubjectMarks);
+        marksEditor.addEventListener("click", (event) => {
+            const removeBtn = event.target.closest(".remove-mark-btn");
+            if (!removeBtn) return;
+            removeBtn.closest(".mark-row")?.remove();
+            updateMarksEmptyState();
+        });
+    </script>
 </body>
 </html>
