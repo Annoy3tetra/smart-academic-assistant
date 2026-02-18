@@ -1,0 +1,546 @@
+### Recursion
+Recursion is a programming technique where a function calls itself.
+It must include:
+1. Base case
+2. Recursive case
+
+Example:
+def factorial(n):
+    if n == 0:
+        return 1
+    return n * factorial(n-1)
+
+### Binary Search
+Binary Search works on sorted arrays.
+Time complexity is O(log n).
+
+### Linked List
+A linked list is a linear data structure where each element points to the next.
+
+### Arrays
+An array stores elements in contiguous memory locations.
+It supports O(1) access by index.
+Insertion or deletion in the middle usually costs O(n).
+
+### Stack
+A stack follows Last In, First Out (LIFO).
+Common operations:
+1. push
+2. pop
+3. peek
+Typical use cases include expression evaluation and undo operations.
+
+### Queue
+A queue follows First In, First Out (FIFO).
+Common operations:
+1. enqueue
+2. dequeue
+3. front
+It is used in scheduling and breadth-first search.
+
+### Tree
+A tree is a hierarchical data structure with nodes and edges.
+Root is the top node, and leaf nodes have no children.
+Binary tree means each node has at most two children.
+
+### Binary Search Tree
+In a BST:
+1. left subtree values are smaller
+2. right subtree values are larger
+Average search complexity is O(log n), worst-case O(n).
+
+### Heap
+A heap is a complete binary tree used for priority queues.
+Max-heap: parent is greater than children.
+Min-heap: parent is smaller than children.
+Insertion and deletion take O(log n).
+
+### Graph Basics
+A graph has vertices (nodes) and edges (connections).
+It can be directed or undirected, weighted or unweighted.
+Representations:
+1. adjacency list
+2. adjacency matrix
+
+### BFS
+Breadth-First Search explores level by level.
+It uses a queue.
+BFS finds shortest path in an unweighted graph.
+
+### DFS
+Depth-First Search explores as deep as possible first.
+It uses recursion or an explicit stack.
+DFS is useful for cycle detection and topological ideas.
+
+### Dynamic Programming
+Dynamic Programming solves overlapping subproblems and stores results.
+Two common styles:
+1. memoization (top-down)
+2. tabulation (bottom-up)
+Examples include Fibonacci, knapsack, and longest common subsequence.
+
+### Time and Space Complexity
+Big-O describes upper bound growth.
+Common complexities:
+1. O(1) constant
+2. O(log n) logarithmic
+3. O(n) linear
+4. O(n log n) linearithmic
+5. O(n^2) quadratic
+
+### Sorting Algorithms
+Bubble sort: O(n^2), simple but slow.
+Merge sort: O(n log n), stable, uses extra space.
+Quick sort: average O(n log n), worst O(n^2), usually fast in practice.
+
+### Hashing
+Hashing maps keys to indices using a hash function.
+Average lookup, insert, delete are O(1).
+Collisions can be handled by chaining or open addressing.
+
+### SQL Basics
+SQL is used to manage relational databases.
+Core commands:
+1. SELECT
+2. INSERT
+3. UPDATE
+4. DELETE
+
+### Normalization
+Normalization reduces redundancy in database tables.
+Normal forms:
+1. 1NF: atomic values
+2. 2NF: remove partial dependency
+3. 3NF: remove transitive dependency
+
+### Transactions and ACID
+A transaction is a logical unit of database work.
+ACID properties:
+1. Atomicity
+2. Consistency
+3. Isolation
+4. Durability
+
+### Indexing in Databases
+Indexes speed up read operations but may slow writes.
+B-tree indexes are common in relational databases.
+Use indexes on columns frequently used in WHERE, JOIN, ORDER BY.
+
+### Operating System Basics
+An operating system manages hardware and software resources.
+Major roles:
+1. process management
+2. memory management
+3. file system management
+4. device management
+
+### Processes and Threads
+A process is an independent program in execution.
+A thread is a lightweight execution unit within a process.
+Threads share process memory; processes are isolated.
+
+### CPU Scheduling
+Scheduling algorithms decide execution order.
+Examples:
+1. FCFS
+2. SJF
+3. Round Robin
+4. Priority Scheduling
+
+### Deadlock
+Deadlock occurs when processes wait indefinitely for resources.
+Necessary conditions:
+1. mutual exclusion
+2. hold and wait
+3. no preemption
+4. circular wait
+
+### Paging and Virtual Memory
+Paging divides memory into fixed-size pages and frames.
+Virtual memory allows processes to use more memory than physically available.
+Page replacement algorithms include FIFO, LRU, and Optimal.
+
+### Computer Networks Basics
+A network connects devices for communication.
+Important concepts:
+1. latency
+2. bandwidth
+3. throughput
+4. packet loss
+
+### OSI Model
+OSI has 7 layers:
+1. Physical
+2. Data Link
+3. Network
+4. Transport
+5. Session
+6. Presentation
+7. Application
+
+### TCP vs UDP
+TCP is connection-oriented and reliable.
+UDP is connectionless and faster with less overhead.
+Use TCP for reliability and UDP for real-time applications.
+
+### HTTP Methods
+Common HTTP methods:
+1. GET for retrieving data
+2. POST for creating data
+3. PUT for replacing data
+4. PATCH for partial update
+5. DELETE for removal
+
+### Machine Learning Basics
+Machine Learning enables systems to learn patterns from data.
+Main paradigms:
+1. supervised learning
+2. unsupervised learning
+3. reinforcement learning
+
+### Supervised Learning
+In supervised learning, models learn from labeled data.
+Tasks:
+1. classification
+2. regression
+Common algorithms include logistic regression, decision trees, and SVM.
+
+### Unsupervised Learning
+Unsupervised learning uses unlabeled data.
+Tasks:
+1. clustering
+2. dimensionality reduction
+Examples include K-means and PCA.
+
+### Model Evaluation Metrics
+Classification metrics:
+1. accuracy
+2. precision
+3. recall
+4. F1-score
+Regression metrics:
+1. MAE
+2. MSE
+3. RMSE
+4. R-squared
+
+### Overfitting and Underfitting
+Overfitting means memorizing training data and poor generalization.
+Underfitting means model is too simple to learn patterns.
+Regularization, cross-validation, and better feature engineering help.
+
+### Gradient Descent
+Gradient descent optimizes model parameters by minimizing loss.
+Variants:
+1. batch gradient descent
+2. stochastic gradient descent
+3. mini-batch gradient descent
+
+### NLP Basics
+Natural Language Processing works with human language text.
+Typical pipeline:
+1. tokenization
+2. stopword removal
+3. stemming or lemmatization
+4. vectorization
+
+### Embeddings
+Embeddings are dense vector representations of text.
+Semantic similarity can be measured using cosine similarity.
+Embeddings are key for retrieval in RAG systems.
+
+### RAG Overview
+Retrieval-Augmented Generation combines search with generation.
+High-level flow:
+1. split documents into chunks
+2. create embeddings
+3. retrieve top-k relevant chunks
+4. generate final answer using retrieved context
+
+### Study Technique: Active Recall
+Active recall means testing yourself instead of only rereading.
+Use flashcards, practice questions, and closed-book summaries.
+It improves long-term retention.
+
+### Study Technique: Spaced Repetition
+Spaced repetition reviews material at increasing intervals.
+It reduces forgetting and improves memory durability.
+Use daily short reviews rather than long cramming sessions.
+
+### Exam Preparation Strategy
+Build a plan with:
+1. syllabus breakdown
+2. topic prioritization by weight and weakness
+3. timed practice papers
+4. revision checkpoints
+
+### Writing Better Answers
+For theory questions:
+1. define the concept
+2. explain mechanism or steps
+3. provide one concrete example
+4. end with a concise summary
+
+### Debugging Strategy
+Debugging checklist:
+1. reproduce the issue consistently
+2. isolate the failing component
+3. inspect logs and inputs
+4. test one fix at a time
+5. add regression tests
+
+### Course Recommendation Framework
+Course recommendation should consider:
+1. current year and semester
+2. branch or specialization
+3. current CGPA and academic load
+4. career goal (job, higher studies, startup, research)
+5. available weekly study hours
+6. prerequisite completion
+
+### Recommendation Rule: Skill Gap First
+Recommend courses based on missing skills, not only popularity.
+If a student targets Data Science but lacks Python and statistics, recommend foundation courses first.
+If foundations are weak, advanced course recommendations should be postponed.
+
+### Recommendation Rule: 70-20-10 Learning Mix
+Use:
+1. 70 percent core degree-aligned courses
+2. 20 percent career-aligned electives
+3. 10 percent exploration courses
+This mix balances GPA safety and employability growth.
+
+### Student Profile: Beginner Programmer
+If student struggles with coding basics, recommend:
+1. Programming Fundamentals in C or Python
+2. Problem Solving and Computational Thinking
+3. Data Structures Basics
+4. Intro to Git and Version Control
+Avoid recommending advanced competitive programming initially.
+
+### Student Profile: Software Developer Path
+Recommended sequence:
+1. Data Structures and Algorithms
+2. Object-Oriented Programming
+3. Database Management Systems
+4. Operating Systems
+5. Computer Networks
+6. Software Engineering
+7. Web Development or Backend Engineering
+
+### Student Profile: Data Science Path
+Recommended sequence:
+1. Python for Data Analysis
+2. Probability and Statistics
+3. Linear Algebra for ML
+4. Machine Learning Fundamentals
+5. SQL for Analytics
+6. Data Visualization
+7. Applied ML Projects
+
+### Student Profile: AI/ML Engineer Path
+Recommended sequence:
+1. Mathematics for AI (linear algebra, calculus, probability)
+2. Python and Scientific Computing
+3. Machine Learning
+4. Deep Learning
+5. NLP or Computer Vision
+6. MLOps Basics
+7. LLM and RAG Systems
+
+### Student Profile: Cybersecurity Path
+Recommended sequence:
+1. Computer Networks Fundamentals
+2. Operating Systems and Linux
+3. Cryptography Basics
+4. Web Security Fundamentals
+5. Ethical Hacking and Penetration Testing
+6. Security Operations and Incident Response
+7. Cloud Security Basics
+
+### Student Profile: Cloud/DevOps Path
+Recommended sequence:
+1. Linux and Shell Scripting
+2. Networking and System Administration
+3. Git and CI/CD
+4. Docker and Containerization
+5. Kubernetes Fundamentals
+6. Cloud Platform Basics (AWS/Azure/GCP)
+7. Infrastructure as Code
+
+### Student Profile: Product/Business Analyst Path
+Recommended sequence:
+1. Spreadsheet Modeling
+2. SQL and Business Intelligence
+3. Statistics for Decision Making
+4. Product Metrics and Experimentation
+5. Data Storytelling and Dashboards
+6. Basics of Product Management
+
+### Recommendation by Academic Performance
+For CGPA below 6.5:
+1. prioritize core recovery courses
+2. take one lighter skill course
+3. avoid overloaded elective baskets
+For CGPA 6.5 to 8.0:
+1. keep core subjects stable
+2. add one career-focused elective
+For CGPA above 8.0:
+1. include advanced electives
+2. include project or research-oriented course
+
+### Recommendation by Available Time
+If weekly free time is less than 6 hours:
+Recommend one main course plus one micro-course.
+If weekly free time is 6 to 12 hours:
+Recommend two structured courses with project work.
+If weekly free time is more than 12 hours:
+Recommend two major courses plus one specialization module.
+
+### Prerequisite-Aware Recommendation
+Never recommend Advanced DSA before:
+1. basic programming
+2. arrays, strings, recursion
+Never recommend Deep Learning before:
+1. Python basics
+2. ML fundamentals
+3. linear algebra and probability basics
+
+### Semester 1 Recommendation
+Focus:
+1. programming fundamentals
+2. engineering mathematics
+3. communication skills
+4. digital literacy tools
+Goal is to build learning discipline and coding confidence.
+
+### Semester 2 Recommendation
+Focus:
+1. data structures basics
+2. discrete mathematics
+3. database fundamentals
+4. mini coding project
+Goal is to shift from syntax to problem solving.
+
+### Semester 3 Recommendation
+Focus:
+1. object-oriented programming
+2. DBMS intermediate
+3. operating systems basics
+4. web development fundamentals
+Goal is to build development-oriented competency.
+
+### Semester 4 Recommendation
+Focus:
+1. advanced DSA
+2. computer networks
+3. software engineering
+4. one track elective (AI, cloud, security, product)
+Goal is to align coursework with target role.
+
+### Semester 5 Recommendation
+Focus:
+1. specialization core 1
+2. specialization core 2
+3. internship preparation course
+4. major project phase 1
+Goal is industry readiness and resume depth.
+
+### Semester 6 Recommendation
+Focus:
+1. specialization advanced elective
+2. system design or architecture fundamentals
+3. major project phase 2
+4. interview preparation module
+Goal is placement and portfolio execution.
+
+### Semester 7 Recommendation
+Focus:
+1. capstone project
+2. industry elective
+3. open elective for breadth
+4. aptitude and mock interview training
+Goal is transition from student to professional.
+
+### Semester 8 Recommendation
+Focus:
+1. project completion and documentation
+2. placement support modules
+3. higher studies prep (if needed)
+4. professional ethics and workplace skills
+Goal is strong exit profile.
+
+### Elective Recommendation: AI Track
+Suggested electives:
+1. machine learning
+2. deep learning
+3. natural language processing
+4. computer vision
+5. reinforcement learning basics
+
+### Elective Recommendation: Software Engineering Track
+Suggested electives:
+1. advanced databases
+2. distributed systems
+3. software testing and QA
+4. backend architecture
+5. DevOps practices
+
+### Elective Recommendation: Data Analytics Track
+Suggested electives:
+1. business analytics
+2. data warehousing
+3. big data tools
+4. data visualization and storytelling
+5. experiment design
+
+### Elective Recommendation: Cybersecurity Track
+Suggested electives:
+1. network security
+2. application security
+3. malware analysis basics
+4. digital forensics
+5. secure coding practices
+
+### Course Load Balancing Rule
+In one semester:
+1. choose at most two heavy theory subjects
+2. choose at most one highly mathematical elective
+3. pair difficult courses with one practical/lab-focused course
+Balanced load improves completion and grades.
+
+### Recommendation with Internship Goal
+If internship is targeted in next 6 months:
+1. prioritize DSA, DBMS, OS, CN refresher
+2. add one project course with GitHub deliverables
+3. include aptitude and interview practice
+
+### Recommendation with Higher Studies Goal
+If higher studies is targeted:
+1. prioritize mathematical rigor courses
+2. add research methods and paper reading
+3. include final-year thesis or guided project
+4. prepare for exams like GRE/GATE as relevant
+
+### Recommendation for Career Switchers
+For non-CS branch students entering software:
+1. intro programming bridge course
+2. DSA foundation
+3. database basics
+4. web/backend project course
+5. interview preparation course
+
+### Soft Skill Course Recommendation
+Always include at least one soft-skill component:
+1. technical communication
+2. teamwork and collaboration
+3. presentation and documentation
+4. professional email and interview etiquette
+
+### Recommendation Output Template
+A good recommendation response should include:
+1. recommended courses list
+2. reason for each course
+3. prerequisite check
+4. weekly study plan
+5. expected outcomes after completion
