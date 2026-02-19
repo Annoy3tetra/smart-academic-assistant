@@ -18,8 +18,17 @@
         }
         .custom-card:hover { transform: translateY(-5px); }
 
-        .gradient-card-1 { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; }
-        .gradient-card-2 { background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%); color: white; }
+        .text-high {color: red;}
+        .text-balanced {color: yellow;}
+        .text-veryhigh {color: orange;}
+        .text-medium {color: blue;}
+        .text-low {color: green;}
+
+        .gradient-card-low { background: linear-gradient(135deg, #25e907 0%, #9bb763 100%); color: white; }
+        .gradient-card-balanced { background: linear-gradient(135deg, hsl(59, 92%, 48%) 0%, #b4aa3e 100%); color: white; }
+        .gradient-card-medium { background: linear-gradient(135deg, #1c08f5 0%, #51449f 100%); color: white; }
+        .gradient-card-high { background: linear-gradient(135deg, #eda50b 0%, #b48944 100%); color: white; }
+        .gradient-card-very-high { background: linear-gradient(135deg, #d83407 0%, #cf5b46 100%); color: white; }
 
         .search-input { border: none; background-color: #ffffff; border-radius: 15px; padding: 10px 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .badge-soft-success { background-color: #d1e7dd; color: #0f5132; }
@@ -48,12 +57,12 @@
 
         <div class="row g-4 mb-4">
             <div class="col-md-6">
-                <div class="custom-card gradient-card-2 position-relative overflow-hidden">
+                <div class="custom-card gradient-card-low position-relative overflow-hidden" id="prediction-card">
                     <div class="position-relative z-1">
                         <h5 class="mb-1">Latest Prediction</h5>
                         <small class="opacity-75">From your most recent run</small>
                         <h2 class="mt-3 fw-bold" id="predicted-score">--</h2>
-                        <span class="badge bg-white text-danger mt-2 rounded-pill px-3" id="risk-level-badge">Risk: --</span>
+                        <span class="badge bg-white text-medium mt-2 rounded-pill px-3" id="risk-level-badge">Risk: --</span>
                     </div>
                     <i class="bi bi-graph-up-arrow position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
                 </div>
@@ -96,7 +105,6 @@
                         <h6 class="fw-bold m-0">Subject Marks</h6>
                         <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="add-mark-row-btn">+ Add</button>
                     </div>
-                    <small class="text-muted d-block mb-3">Firestore: <code>users/{uid}.subject_marks</code></small>
 
                     <div id="marks-empty-state" class="alert alert-light border mb-3">
                         No subject marks found. Add subjects and save.
@@ -323,7 +331,7 @@
                 const scoreValue = row.querySelector(".subject-score").value.trim();
 
                 if (!subject && !scoreValue) return;
-                if (!subject || !scoreValue) throw new Error("Har row me subject aur marks dono bharna zaruri hai.");
+                if (!subject || !scoreValue) throw new Error("Both subject name and marks are required for each entry.");
 
                 const score = Number(scoreValue);
                 if (!Number.isFinite(score) || score < 0 || score > 100) {
@@ -386,7 +394,7 @@
 
         async function saveSubjectMarks() {
             if (!currentUserId) {
-                setMarksStatus("User session nahi mila. Dubara login karein.", "error");
+                setMarksStatus("Couldn't Find User Session. Try logging again.", "error");
                 return;
             }
 
@@ -404,7 +412,7 @@
                 setMarksStatus("Marks successfully save ho gaye.", "success");
             } catch (error) {
                 console.error("Failed to save marks:", error);
-                setMarksStatus(error.message || "Marks save nahi ho paaye.", "error");
+                setMarksStatus(error.message || "Couldn't save the Marks", "error");
             }
         }
 
@@ -421,16 +429,57 @@
         function applyRiskBadge(riskLevel) {
             const riskBadge = document.getElementById("risk-level-badge");
             riskBadge.textContent = `Risk: ${riskLevel || "--"}`;
-            riskBadge.classList.remove("text-danger", "text-warning", "text-success");
+            riskBadge.classList.remove(
+                "text-danger",
+                "text-warning",
+                "text-success",
+                "text-high",
+                "text-medium",
+                "text-low",
+                "text-balanced",
+                "text-veryhigh",
+                "text-white"
+            );
 
             if (riskLevel === "HIGH") {
-                riskBadge.classList.add("text-danger");
+                riskBadge.classList.add("text-high");
             } else if (riskLevel === "MEDIUM") {
-                riskBadge.classList.add("text-warning");
+                riskBadge.classList.add("text-medium");
             } else if (riskLevel === "LOW") {
-                riskBadge.classList.add("text-success");
+                riskBadge.classList.add("text-low");
+            } else if (riskLevel === "BALANCED") {
+                riskBadge.classList.add("text-balanced");
+            } else if (riskLevel === "VERY HIGH") {
+                riskBadge.classList.add("text-veryhigh");
             } else {
-                riskBadge.classList.add("text-danger");
+                riskBadge.classList.add("text-white");
+            }
+        }
+
+        function applyPredictionCardGradient(riskLevel) {
+            const predictionCard = document.getElementById("prediction-card");
+            if (!predictionCard) return;
+
+            predictionCard.classList.remove(
+                "gradient-card-low",
+                "gradient-card-balanced",
+                "gradient-card-medium",
+                "gradient-card-high",
+                "gradient-card-very-high"
+            );
+
+            if (riskLevel === "LOW") {
+                predictionCard.classList.add("gradient-card-low");
+            } else if (riskLevel === "BALANCED") {
+                predictionCard.classList.add("gradient-card-balanced");
+            } else if (riskLevel === "MEDIUM") {
+                predictionCard.classList.add("gradient-card-medium");
+            } else if (riskLevel === "HIGH") {
+                predictionCard.classList.add("gradient-card-high");
+            } else if (riskLevel === "VERY HIGH") {
+                predictionCard.classList.add("gradient-card-very-high");
+            } else {
+                predictionCard.classList.add("gradient-card-low");
             }
         }
 
@@ -441,6 +490,7 @@
             predictedScore.textContent = Number.isFinite(score) ? `${score.toFixed(1)}%` : "--";
 
             applyRiskBadge(docData?.risk_level);
+            applyPredictionCardGradient(docData?.risk_level);
         }
 
         function getCreatedAtValue(data) {
@@ -496,7 +546,7 @@
             } catch (error) {
                 console.error("Failed to load dashboard data:", error);
                 renderPrediction(null);
-                setMarksStatus("Marks load nahi ho paaye.", "error");
+                setMarksStatus("Could not load marks.", "error");
             }
         });
 
