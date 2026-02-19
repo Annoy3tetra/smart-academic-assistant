@@ -47,21 +47,7 @@
         </div>
 
         <div class="row g-4 mb-4">
-            <div class="col-md-4">
-                <div class="custom-card gradient-card-1 position-relative overflow-hidden">
-                    <div class="position-relative z-1">
-                        <h5 class="mb-1">Placement Readiness</h5>
-                        <small class="opacity-75" id="placement-readiness-label">Loading latest prediction...</small>
-                        <h2 class="mt-3 fw-bold" id="placement-readiness-score">--</h2>
-                        <div class="progress mt-3" style="height: 6px; background: rgba(255,255,255,0.3);">
-                            <div class="progress-bar bg-white" role="progressbar" id="placement-readiness-bar" style="width: 0%"></div>
-                        </div>
-                    </div>
-                    <i class="bi bi-briefcase-fill position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
-                </div>
-            </div>
-
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="custom-card gradient-card-2 position-relative overflow-hidden">
                     <div class="position-relative z-1">
                         <h5 class="mb-1">Latest Prediction</h5>
@@ -73,7 +59,7 @@
                 </div>
             </div>
 
-            <div class="col-md-4">
+            <div class="col-md-6">
                 <div class="custom-card d-flex align-items-center justify-content-between">
                     <div>
                         <h5 class="text-muted mb-1">Current Percentage</h5>
@@ -432,12 +418,6 @@
             await loadLearningRecommendations(normalized);
         }
 
-        function readinessToPercent(readiness) {
-            if (readiness === "READY") return 85;
-            if (readiness === "MODERATE") return 60;
-            return 30;
-        }
-
         function applyRiskBadge(riskLevel) {
             const riskBadge = document.getElementById("risk-level-badge");
             riskBadge.textContent = `Risk: ${riskLevel || "--"}`;
@@ -456,18 +436,9 @@
 
         function renderPrediction(docData) {
             const predictedScore = document.getElementById("predicted-score");
-            const readinessLabel = document.getElementById("placement-readiness-label");
-            const readinessScore = document.getElementById("placement-readiness-score");
-            const readinessBar = document.getElementById("placement-readiness-bar");
 
             const score = Number(docData?.predicted_score);
             predictedScore.textContent = Number.isFinite(score) ? `${score.toFixed(1)}%` : "--";
-
-            const readiness = docData?.placement_readiness || "NOT READY";
-            const readinessPercent = readinessToPercent(readiness);
-            readinessLabel.textContent = `Status: ${readiness}`;
-            readinessScore.textContent = `${readinessPercent}%`;
-            readinessBar.style.width = `${readinessPercent}%`;
 
             applyRiskBadge(docData?.risk_level);
         }
