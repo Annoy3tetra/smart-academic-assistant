@@ -1,219 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScholarAI - Smart Academic Assistant</title>
-
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <style>
-        :root {
-            --primary-color: #6c5ce7;
-            --bg-color: #f3f4f8;
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            overflow: hidden;
-        }
-
-        /* SIDEBAR STYLING */
-        .sidebar {
-            background: #ffffff;
-            height: 100vh;
-            width: 280px;
-            position: fixed;
-            top: 0;
-            left: 0;
-            border-top-right-radius: 30px;
-            border-bottom-right-radius: 30px;
-            padding: 20px;
-            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.02);
-            z-index: 1000;
-        }
-
-        .logo-text {
-            font-weight: 700;
-            color: var(--primary-color);
-            font-size: 1.5rem;
-        }
-
-        .nav-link {
-            color: #999;
-            font-weight: 500;
-            margin-bottom: 10px;
-            padding: 12px 20px;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-        }
-
-        .nav-link:hover {
-            color: var(--primary-color);
-            background: #f0f0ff;
-        }
-
-        .nav-link.active {
-            color: var(--primary-color) !important;
-            background-color: transparent !important;
-            font-weight: 600;
-            position: relative;
-        }
-
-        /* Purple Dot Indicator */
-        .nav-link.active::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 8px;
-            width: 8px;
-            background-color: var(--primary-color);
-            border-radius: 50%;
-        }
-
-        .main-content-wrapper {
-            margin-left: 280px;
-            /* Width of sidebar */
-            height: 100vh;
-            background-color: var(--bg-color);
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            display: block;
-        }
-
-        /* Cursor pointer for logout to show it is clickable */
-        #logout-btn {
-            cursor: pointer;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ScholarAI</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body{margin:0;font-family:Segoe UI,Tahoma,Geneva,Verdana,sans-serif;background:#f3f4f8;min-height:100vh;display:flex;align-items:center;justify-content:center}
+    .cardx{background:#fff;border:1px solid rgba(0,0,0,.05);border-radius:16px;padding:24px;box-shadow:0 12px 28px rgba(0,0,0,.08);text-align:center;max-width:420px;width:92%}
+    h1{font-size:1.2rem;margin:0 0 .35rem}
+    p{margin:0;color:#666}
+  </style>
 </head>
-
 <body>
+  <div class="cardx">
+    <h1>EduMint AI</h1>
+    <p id="status">Checking your role and opening dashboard...</p>
+  </div>
 
-    <div class="sidebar d-flex flex-column">
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        <div class="d-flex align-items-center mb-5 px-3 pt-2">
-            <i class="bi bi-mortarboard-fill me-2 fs-3 text-primary"></i>
-            <span class="logo-text">ScholarAI</span>
-        </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
+      authDomain: "testing-c2417.firebaseapp.com",
+      projectId: "testing-c2417",
+      storageBucket: "testing-c2417.firebasestorage.app",
+      messagingSenderId: "27724276111",
+      appId: "1:27724276111:web:a289d7642e1227818d6bfa",
+      measurementId: "G-KTK16HRSX4"
+    };
 
-        <ul class="nav flex-column mb-auto">
-            <li class="nav-item">
-                <a href="dashboard-home.html" target="content-frame" class="nav-link active" onclick="setActive(this)">
-                    <i class="bi bi-grid-fill me-2"></i> Dashboard
-                </a>
-            </li>
+    const statusEl = document.getElementById("status");
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
 
-            <li class="nav-item">
-                <a href="predict.html" target="content-frame" class="nav-link" onclick="setActive(this)">
-                    <i class="bi bi-graph-up-arrow me-2"></i> Performance AI
-                </a>
-            </li>
+    function go(path) {
+      window.location.href = path;
+    }
 
-            <li class="nav-item">
-                <a href="placement.html" target="content-frame" class="nav-link" onclick="setActive(this)">
-                    <i class="bi bi-briefcase-fill me-2"></i> Placement Track
-                </a>
-            </li>
+    async function resolveRoute(user) {
+      try {
+        const snap = await getDoc(doc(db, "users", user.uid));
+        const userData = snap.exists() ? snap.data() : {};
+        const role = String(userData?.role || "Student").toLowerCase();
 
-            <li class="nav-item">
-                <a href="preparation.html" target="content-frame" class="nav-link" onclick="setActive(this)">
-                    <i class="bi bi-list-check me-2"></i> Prep Tracker
-                </a>
-            </li>
-
-            <li class="nav-item">
-                <a href="course_guide.html" target="content-frame" class="nav-link" onclick="setActive(this)">
-                    <i class="bi bi-book-half me-2"></i> Course Guide
-                </a>
-            </li>
-        </ul>
-
-        <div class="mt-auto px-2">
-            <div class="d-flex align-items-center p-2 bg-light rounded-3 mb-2">
-                <img src="" id="user-img" alt="" width="32" height="32" class="rounded-circle me-2">
-                <div>
-                    <small class="d-block fw-bold text-dark" id="user-name">Loading...</small>
-                    <small class="text-muted" style="font-size: 0.7rem;">Student</small>
-                </div>
-            </div>
-
-            <button id="logout-btn" type="button" class="btn btn-sm btn-outline-danger w-100 border-0 text-start">
-                <i class="bi bi-box-arrow-left me-2"></i> Sign Out
-            </button>
-        </div>
-    </div>
-
-    <div class="main-content-wrapper">
-        <iframe name="content-frame" src="dashboard-home.html"></iframe>
-    </div>
-
-    <script>
-        function setActive(element) {
-            document.querySelectorAll('.nav-link').forEach(link => link.classList.remove('active'));
-            element.classList.add('active');
+        if (role.includes("admin") || role.includes("prof") || role.includes("hod")) {
+          go("admin/index.html");
+          return;
         }
-    </script>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        go("student-dashboard.html");
+      } catch (error) {
+        console.error("Route resolve failed:", error);
+        statusEl.textContent = "Unable to load role. Please login again.";
+        await signOut(auth);
+        setTimeout(() => go("login.html"), 800);
+      }
+    }
 
-        const firebaseConfig = {
-
-            apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
-            authDomain: "testing-c2417.firebaseapp.com",
-            projectId: "testing-c2417",
-            storageBucket: "testing-c2417.firebasestorage.app",
-            messagingSenderId: "27724276111",
-            appId: "1:27724276111:web:a289d7642e1227818d6bfa",
-            measurementId: "G-KTK16HRSX4"
-        };
-
-
-
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        // 1. Check Authentication State
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                // User is signed in
-                console.log("User detected:", user.email);
-                document.getElementById('user-name').textContent = user.email.split('@')[0]; // Simple name extraction
-                // Optional: Fetch detailed profile from Firestore if you created one
-            } else {
-                // No user is signed in, redirect to login
-                window.location.href = "login.html";
-            }
-        });
-
-        // 2. Logout Functionality
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => {
-                window.location.href = "login.html";
-            }).catch((error) => {
-                console.error("Logout Error:", error);
-            });
-        });
-
-    </script>
-
-    <script src="predict-request.js"></script>
-
+    onAuthStateChanged(auth, (user) => {
+      if (!user) {
+        go("login.html");
+        return;
+      }
+      resolveRoute(user);
+    });
+  </script>
 </body>
-
 </html>

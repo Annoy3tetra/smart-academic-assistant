@@ -14,3 +14,5 @@ bcrypt==4.0.1
 python-dotenv
 python-multipart
 google-generativeai
+google-genai
+sentence-transformers

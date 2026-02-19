@@ -2,18 +2,10 @@ import os
 import pandas as pd
 import random
 
-# ==============================
-# Setup Paths
-# ==============================
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 DATA_PATH = os.path.join(BASE_DIR, "datasets", "demo_student_dataset.csv")
 
 os.makedirs(os.path.join(BASE_DIR, "datasets"), exist_ok=True)
-
-# ==============================
-# Helper Functions
-# ==============================
 
 def assign_performance(cgpa, technical, projects):
     if cgpa > 9 and technical >= 8 and projects >= 3:
@@ -40,13 +32,9 @@ def assign_domain(technical, projects):
     else:
         return random.choice(["Web", "Data"])
 
-# ==============================
-# Generate Data
-# ==============================
-
 students = []
 
-for i in range(1, 201):  # 200 students
+for i in range(1, 201):
 
     attendance = random.randint(50, 100)
     internal = random.randint(45, 95)

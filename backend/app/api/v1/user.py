@@ -1,3 +1,6 @@
+from functools import lru_cache
+from importlib.util import module_from_spec, spec_from_file_location
+from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.core.database import get_db
@@ -11,6 +14,7 @@ from app.schemas.schemas_user import (
     PredictDirectRequest,
     CourseRecommendationRequest,
     CourseRecommendationResponse,
+    RagQueryRequest,
 )
 from app.crud import student_crud,user_crud,analytics_crud
 from app.ai_engine.performance_predictor import predict_performance
@@ -26,6 +30,28 @@ router = APIRouter(
     prefix="/students",
     tags=["Students"]
 )
+
+
+@lru_cache(maxsize=1)
+def _load_rag_generate_answer():
+    repo_root = Path(__file__).resolve().parents[4]
+    rag_engine_path = repo_root / "RAG MODEL" / "ml" / "rag" / "rag_engine.py"
+
+    if not rag_engine_path.exists():
+        raise FileNotFoundError(f"RAG engine not found at: {rag_engine_path}")
+
+    spec = spec_from_file_location("rag_engine_module", rag_engine_path)
+    if spec is None or spec.loader is None:
+        raise RuntimeError("Could not load RAG engine module spec")
+
+    rag_module = module_from_spec(spec)
+    spec.loader.exec_module(rag_module)
+
+    generate_answer = getattr(rag_module, "generate_answer", None)
+    if not callable(generate_answer):
+        raise RuntimeError("generate_answer function missing in RAG engine")
+
+    return generate_answer
 
 @router.post('/')
 def create_student(student: StudentCreate, db: Session = Depends(get_db)):
@@ -104,7 +130,6 @@ def predict_student(
         summary["total_subjects"]
     )
 
-    # Save or update prediction
     existing = db.query(Prediction).filter(Prediction.student_id == student_id).first()
 
     if existing:
@@ -171,6 +196,26 @@ def recommend_courses(payload: CourseRecommendationRequest):
         attendance=payload.attendance,
         top_n=payload.top_n,
     )
+
+
+@router.post("/rag-query")
+def rag_query(payload: RagQueryRequest):
+    query = payload.query.strip()
+    if not query:
+        raise HTTPException(status_code=422, detail="Query cannot be empty")
+
+    try:
+        generate_answer = _load_rag_generate_answer()
+        answer = generate_answer(query)
+    except FileNotFoundError as err:
+        raise HTTPException(status_code=500, detail=str(err)) from err
+    except Exception as err:
+        raise HTTPException(status_code=500, detail=f"RAG processing failed: {err}") from err
+
+    return {
+        "query": query,
+        "answer": answer
+    }
 
 @router.post("/login")
 def login(

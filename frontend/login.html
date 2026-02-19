@@ -13,7 +13,6 @@
         .btn-primary:hover { background-color: #5b4cc4; }
         .form-control:focus, .form-select:focus { border-color: #6c5ce7; box-shadow: 0 0 0 0.25rem rgba(108, 92, 231, 0.25); }
         
-        /* Transition for switching modes */
         .mode-title { transition: opacity 0.3s; }
         .hidden { display: none; }
     </style>
@@ -77,7 +76,6 @@
         import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
-        // Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
             authDomain: "testing-c2417.firebaseapp.com",
@@ -88,17 +86,14 @@
             measurementId: "G-KTK16HRSX4"
         };
 
-        // Initialize Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
 
-        // UI State Variables
         let isLoginMode = true;
         const form = document.getElementById('authForm');
         const statusMsg = document.getElementById('status-msg');
 
-        // Toggle Login / Signup Mode
         document.getElementById('toggleBtn').addEventListener('click', (e) => {
             e.preventDefault();
             isLoginMode = !isLoginMode;
@@ -114,21 +109,18 @@
             const toggleBtn = document.getElementById('toggleBtn');
 
             if (isLoginMode) {
-                // Switch to Login View
                 nameField.classList.add('hidden');
                 roleField.classList.add('hidden');
                 formTitle.textContent = "Welcome back, Sir.";
                 submitBtn.textContent = "Sign In";
                 toggleText.innerHTML = 'New here? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Create Account</a>';
             } else {
-                // Switch to Signup View
                 nameField.classList.remove('hidden');
                 roleField.classList.remove('hidden');
                 formTitle.textContent = "Create your Academic ID";
                 submitBtn.textContent = "Sign Up";
                 toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Login</a>';
             }
-            // Re-attach listener since innerHTML replaced the element
             document.getElementById('toggleBtn').addEventListener('click', (e) => {
                 e.preventDefault();
                 isLoginMode = !isLoginMode;
@@ -137,7 +129,6 @@
             statusMsg.classList.add('d-none');
         }
 
-        // Handle Form Submission
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -152,21 +143,17 @@
 
             try {
                 if (isLoginMode) {
-                    // LOGIN LOGIC
                     const userCredential = await signInWithEmailAndPassword(auth, email, password);
                     statusMsg.classList.replace('alert-info', 'alert-success');
                     statusMsg.textContent = "Login Successful! Redirecting...";
                     setTimeout(() => window.location.href = "index.html", 1000);
                 } 
                 else {
-                    // SIGNUP LOGIC
                     if (!fullName) throw new Error("Please enter your full name.");
 
-                    // 1. Create Authentication User
                     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
                     const user = userCredential.user;
 
-                    // 2. Save Extra Details (Name, Role) to Firestore
                     await setDoc(doc(db, "users", user.uid), {
                         name: fullName,
                         email: email,
@@ -185,7 +172,6 @@
             }
         });
 
-        // Helper to make Firebase errors readable
         function formatErrorMessage(msg) {
             if (msg.includes("auth/email-already-in-use")) return "Email is already registered.";
             if (msg.includes("auth/weak-password")) return "Password should be at least 6 characters.";
@@ -196,7 +182,7 @@
     </script>
     <script>
 async function loginUser(event) {
-    event.preventDefault(); // prevent page reload
+    event.preventDefault(); 
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
@@ -219,10 +205,8 @@ async function loginUser(event) {
             alert("Login successful!");
             console.log(data);
 
-            // If backend returns token:
             localStorage.setItem("token", data.access_token);
 
-            // redirect
             window.location.href = "dashboard.html";
         } else {
             alert(data.detail || "Login failed");

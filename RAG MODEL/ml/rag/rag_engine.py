@@ -7,9 +7,6 @@ from sentence_transformers import SentenceTransformer
 from google import genai
 from google.genai.errors import APIError
 
-# ==============================
-# Paths
-# ==============================
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "nn_model.pkl")
@@ -42,13 +39,8 @@ def _load_env_file():
 
 _load_env_file()
 
-# Keep huggingface/transformers logs minimal in terminal runs.
 os.environ.setdefault("HF_HUB_DISABLE_TELEMETRY", "1")
 os.environ.setdefault("TRANSFORMERS_VERBOSITY", "error")
-
-# ==============================
-# Load Vector Model + Chunks
-# ==============================
 
 with open(MODEL_PATH, "rb") as f:
     nn_model = pickle.load(f)
@@ -57,7 +49,6 @@ chunks = np.load(CHUNKS_PATH, allow_pickle=True)
 
 
 def _create_embedder():
-    # Prefer cached local model to avoid HF unauthenticated network warnings.
     for local_only in (True, False):
         try:
             with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
@@ -70,24 +61,14 @@ def _create_embedder():
 
 embedder = _create_embedder()
 
-# ==============================
-# Retrieval Layer
-# ==============================
-
 def retrieve_context(query, top_k=1):
     query_embedding = embedder.encode([query])
     distances, indices = nn_model.kneighbors(query_embedding, n_neighbors=top_k)
     retrieved_chunks = [chunks[i] for i in indices[0]]
     return "\n\n".join(retrieved_chunks)
 
-# ==============================
-# Full RAG Pipeline
-# ==============================
 
 def generate_answer(query):
-
-    # Create Gemini client INSIDE function
-
     api_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if not api_key:
         return (

@@ -40,7 +40,9 @@
                     <i class="bi bi-search text-muted me-2"></i>
                     <input type="text" style="border:none; outline:none;" placeholder="Search for courses...">
                 </div>
-                <button class="btn btn-white shadow-sm rounded-circle p-2"><i class="bi bi-bell-fill text-primary"></i></button>
+                <a href="notifications.html" class="btn btn-white shadow-sm rounded-circle p-2" title="Open notifications">
+                    <i class="bi bi-bell-fill text-primary"></i>
+                </a>
             </div>
         </div>
 
@@ -74,9 +76,9 @@
             <div class="col-md-4">
                 <div class="custom-card d-flex align-items-center justify-content-between">
                     <div>
-                        <h5 class="text-muted mb-1">Current CGPA</h5>
-                        <h2 class="fw-bold text-dark m-0">8.4</h2>
-                        <small class="text-success"><i class="bi bi-arrow-up"></i> +0.2 from last sem</small>
+                        <h5 class="text-muted mb-1">Current Percentage</h5>
+                        <h2 class="fw-bold text-dark m-0" id="current-percentage-value">--</h2>
+                        <small class="text-success" id="current-percentage-note">Add subject marks to view percentage</small>
                     </div>
                     <div style="width: 80px; height: 80px; border-radius: 50%; background: #dfe6e9; display:flex; align-items:center; justify-content:center;">
                         <i class="bi bi-trophy-fill fs-2 text-warning"></i>
@@ -284,6 +286,24 @@
             return [];
         }
 
+        function renderCurrentPercentage(subjectMarks) {
+            const percentageValue = document.getElementById("current-percentage-value");
+            const percentageNote = document.getElementById("current-percentage-note");
+            const validMarks = (subjectMarks || [])
+                .map((item) => Number(item?.mark))
+                .filter((value) => Number.isFinite(value));
+
+            if (!validMarks.length) {
+                percentageValue.textContent = "--";
+                percentageNote.textContent = "Add subject marks to view percentage";
+                return;
+            }
+
+            const average = validMarks.reduce((sum, value) => sum + value, 0) / validMarks.length;
+            percentageValue.textContent = `${average.toFixed(1)}%`;
+            percentageNote.textContent = `Based on ${validMarks.length} subject${validMarks.length > 1 ? "s" : ""}`;
+        }
+
         function updateMarksEmptyState() {
             marksEmptyState.classList.toggle("d-none", marksEditor.children.length > 0);
         }
@@ -393,6 +413,7 @@
 
                 const normalized = normalizeSubjectMarks({ subject_marks: subjectMarks });
                 renderMarksEditor(normalized);
+                renderCurrentPercentage(normalized);
                 await loadLearningRecommendations(normalized);
                 setMarksStatus("Marks successfully save ho gaye.", "success");
             } catch (error) {
@@ -407,6 +428,7 @@
             setGreeting(user, userData);
             const normalized = normalizeSubjectMarks(userData);
             renderMarksEditor(normalized);
+            renderCurrentPercentage(normalized);
             await loadLearningRecommendations(normalized);
         }
 
@@ -488,6 +510,7 @@
                 currentUserId = null;
                 setGreeting(null, null);
                 renderMarksEditor([]);
+                renderCurrentPercentage([]);
                 setLearningStatus("Login required for recommendations.", "--");
                 renderPrediction(null);
                 return;

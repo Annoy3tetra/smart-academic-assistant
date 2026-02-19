@@ -2,10 +2,6 @@ import os
 import pickle
 import pandas as pd
 
-# ==============================
-# 1. Load Models and Encoders
-# ==============================
-
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR = os.path.join(BASE_DIR, "saved_models")
 
@@ -21,9 +17,6 @@ with open(os.path.join(MODEL_DIR, "recommendation.pkl"), "rb") as f:
 with open(os.path.join(MODEL_DIR, "label_encoders.pkl"), "rb") as f:
     label_encoders = pickle.load(f)
 
-# ==============================
-# 2. Create New Student Input
-# ==============================
 
 new_student = {
     "attendance_percentage": 85,
@@ -39,22 +32,15 @@ new_student = {
     "preferred_domain": "AI"
 }
 
-# Convert to DataFrame
 input_df = pd.DataFrame([new_student])
 
-# Encode preferred_domain
 le_domain = label_encoders["preferred_domain"]
 input_df["preferred_domain"] = le_domain.transform(input_df["preferred_domain"])
-
-# ==============================
-# 3. Make Predictions
-# ==============================
 
 performance_pred = performance_model.predict(input_df)
 placement_pred = placement_model.predict(input_df)
 recommendation_pred = recommendation_model.predict(input_df)
 
-# Decode predictions
 le_performance = label_encoders["performance_label"]
 le_placement = label_encoders["placement_label"]
 le_domain = label_encoders["preferred_domain"]
@@ -63,17 +49,10 @@ performance_result = le_performance.inverse_transform(performance_pred)
 placement_result = le_placement.inverse_transform(placement_pred)
 recommendation_result = le_domain.inverse_transform(recommendation_pred)
 
-# ==============================
-# 4. Print Results
-# ==============================
-
 print("🎯 Predicted Performance:", performance_result[0])
 print("💼 Placement Status:", placement_result[0])
 print("📚 Recommended Domain:", recommendation_result[0])
 
-# ==============================
-# 5. Suggestion Engine
-# ==============================
 
 def generate_suggestions(student, performance, placement):
     suggestions = []

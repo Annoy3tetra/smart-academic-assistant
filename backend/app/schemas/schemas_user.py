@@ -60,3 +60,7 @@ class CourseRecommendationResponse(BaseModel):
     model_used: str
     weak_subjects: list[str]
     recommendations: list[RecommendedCourse]
+
+
+class RagQueryRequest(BaseModel):
+    query: str = Field(min_length=3, max_length=2000)
