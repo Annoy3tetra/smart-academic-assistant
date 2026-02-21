@@ -24,12 +24,61 @@
         .text-medium {color: blue;}
         .text-low {color: green;}
 
+
+
         .gradient-card-low { background: linear-gradient(135deg, #25e907 0%, #9bb763 100%); color: white; }
         .gradient-card-balanced { background: linear-gradient(135deg, hsl(59, 92%, 48%) 0%, #b4aa3e 100%); color: white; }
         .gradient-card-medium { background: linear-gradient(135deg, #1c08f5 0%, #51449f 100%); color: white; }
         .gradient-card-high { background: linear-gradient(135deg, #eda50b 0%, #b48944 100%); color: white; }
         .gradient-card-very-high { background: linear-gradient(135deg, #d83407 0%, #cf5b46 100%); color: white; }
 
+        .grid-info {
+            border-radius: 20px;
+            padding: 22px;
+            width: 100%;
+            height: 100%;
+            min-height: 240px;
+            color: #1f2937;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+        }
+        .grid-info.mission-card { background: linear-gradient(135deg, #ffd4cc 0%, #ffe7b8 100%); }
+        
+        .grid-info.vision-card { background: linear-gradient(135deg, #c7e9ff 0%, #d8f8ea 100%); }
+        .grid-info.goals-card { background: linear-gradient(135deg, #efe2ff 0%, #ffdff0 100%); }
+        .grid-info .grid-label {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.75);
+            margin-bottom: 10px;
+        }
+        .grid-info h5 {
+            margin: 0 0 10px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .grid-info p {
+            margin: 0 0 12px;
+            color: rgba(17, 24, 39, 0.9);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .grid-info ol {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .grid-info li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+            font-size: 0.92rem;
+            color: rgba(17, 24, 39, 0.9);
+        }
+        .grid-info li:last-child { margin-bottom: 0; }
         .search-input { border: none; background-color: #ffffff; border-radius: 15px; padding: 10px 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .badge-soft-success { background-color: #d1e7dd; color: #0f5132; }
         .badge-soft-warning { background-color: #fff3cd; color: #664d03; }
@@ -48,13 +97,51 @@
                 <p class="text-muted small">Your academic performance is looking great today.</p>
             </div>
             <div class="d-flex gap-3 align-items-center">
-                <div class="bg-white rounded-pill px-3 py-2 shadow-sm d-flex align-items-center">
-                    <i class="bi bi-search text-muted me-2"></i>
-                    <input type="text" style="border:none; outline:none;" placeholder="Search for courses...">
-                </div>
+            
                 <a href="notifications.html" class="btn btn-white shadow-sm rounded-circle p-2" title="Open notifications">
                     <i class="bi bi-bell-fill text-primary"></i>
                 </a>
+            </div>
+        </div>
+
+          <!-- site info grid -->
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="grid-info mission-card">
+                    <span class="grid-label">Our Mission</span>
+                    <h5>Empower Every Learner</h5>
+                    <p>We help students improve outcomes with AI-driven insights, personalized guidance, and measurable academic progress.</p>
+                    <ol>
+                        <li>Predict performance from real study data.</li>
+                        <li>Highlight weak subjects early.</li>
+                        <li>Recommend targeted learning actions.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="grid-info vision-card">
+                    <span class="grid-label">Our Vision</span>
+                    <h5>Smarter Academic Growth</h5>
+                    <p>We aim to build an intelligent academic companion that makes learning adaptive, fair, and effective for all students.</p>
+                    <ol>
+                        <li>Deliver data-backed decisions for learners.</li>
+                        <li>Create continuous feedback loops.</li>
+                        <li>Support confidence through clear progress tracking.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="grid-info goals-card">
+                    <span class="grid-label">Core Goals</span>
+                    <h5>What We Focus On</h5>
+                    <p>Our platform is designed to transform raw marks into meaningful direction that students can act on right away.</p>
+                    <ol>
+                        <li>Compare peer trends responsibly.</li>
+                        <li>Continuously improve prediction quality.</li>
+                        <li>Enable better study planning with AI support.</li>
+                    </ol>
+                </div>
             </div>
         </div>
 
@@ -62,9 +149,9 @@
             <div class="col-md-6">
                 <div class="custom-card gradient-card-low position-relative overflow-hidden" id="prediction-card">
                     <div class="position-relative z-1">
-                        <h5 class="mb-1">Latest Prediction</h5>
-                        <small class="opacity-75">From your most recent run</small>
-                        <h2 class="mt-3 fw-bold" id="predicted-score">--</h2>
+                        <h5 class="mb-1 text-black fw-bold">Latest Prediction</h5>
+                        <small class="opacity-75 text-black">From your most recent run</small>
+                        <h2 class="mt-3 fw-bold shadow-sm" id="predicted-score">--</h2>
                         <div class="d-flex flex-wrap gap-2 mt-2">
                             <span class="badge rounded-pill px-3 comparison-chip" id="peer-average-badge">Peers Avg: --</span>
                             <span class="badge rounded-pill px-3 comparison-chip" id="score-diff-badge">Diff: --</span>
