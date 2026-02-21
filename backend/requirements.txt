@@ -18,5 +18,7 @@ scikit-learn
 joblib
 
 sentence-transformers
-google-generativeai
+google-generati
+veai
 google-genai
+pydantic[email]

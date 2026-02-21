@@ -18,13 +18,74 @@
         }
         .custom-card:hover { transform: translateY(-5px); }
 
-        .gradient-card-1 { background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%); color: white; }
-        .gradient-card-2 { background: linear-gradient(135deg, #fab1a0 0%, #ff7675 100%); color: white; }
+        .text-high {color: red;}
+        .text-balanced {color: black;}
+        .text-veryhigh {color: orange;}
+        .text-medium {color: blue;}
+        .text-low {color: green;}
 
+
+
+        .gradient-card-low { background: linear-gradient(135deg, #25e907 0%, #9bb763 100%); color: white; }
+        .gradient-card-balanced { background: linear-gradient(135deg, hsl(59, 92%, 48%) 0%, #b4aa3e 100%); color: white; }
+        .gradient-card-medium { background: linear-gradient(135deg, #1c08f5 0%, #51449f 100%); color: white; }
+        .gradient-card-high { background: linear-gradient(135deg, #eda50b 0%, #b48944 100%); color: white; }
+        .gradient-card-very-high { background: linear-gradient(135deg, #d83407 0%, #cf5b46 100%); color: white; }
+
+        .grid-info {
+            border-radius: 20px;
+            padding: 22px;
+            width: 100%;
+            height: 100%;
+            min-height: 240px;
+            color: #1f2937;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.55);
+        }
+        .grid-info.mission-card { background: linear-gradient(135deg, #ffd4cc 0%, #ffe7b8 100%); }
+        
+        .grid-info.vision-card { background: linear-gradient(135deg, #c7e9ff 0%, #d8f8ea 100%); }
+        .grid-info.goals-card { background: linear-gradient(135deg, #efe2ff 0%, #ffdff0 100%); }
+        .grid-info .grid-label {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.72rem;
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            background: rgba(255, 255, 255, 0.75);
+            margin-bottom: 10px;
+        }
+        .grid-info h5 {
+            margin: 0 0 10px;
+            font-weight: 600;
+            color: #111827;
+        }
+        .grid-info p {
+            margin: 0 0 12px;
+            color: rgba(17, 24, 39, 0.9);
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+        .grid-info ol {
+            margin: 0;
+            padding-left: 18px;
+        }
+        .grid-info li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+            font-size: 0.92rem;
+            color: rgba(17, 24, 39, 0.9);
+        }
+        .grid-info li:last-child { margin-bottom: 0; }
         .search-input { border: none; background-color: #ffffff; border-radius: 15px; padding: 10px 20px; box-shadow: 0 5px 15px rgba(0,0,0,0.03); }
         .badge-soft-success { background-color: #d1e7dd; color: #0f5132; }
         .badge-soft-warning { background-color: #fff3cd; color: #664d03; }
         .mark-row .form-control { border-radius: 12px; }
+        .comparison-chip { background: rgba(255, 255, 255, 0.92); color: #2d3436; }
+        .comparison-chip-positive { background: rgba(212, 237, 218, 0.95); color: #0f5132; }
+        .comparison-chip-negative { background: rgba(248, 215, 218, 0.95); color: #842029; }
     </style>
 </head>
 <body>
@@ -36,24 +97,66 @@
                 <p class="text-muted small">Your academic performance is looking great today.</p>
             </div>
             <div class="d-flex gap-3 align-items-center">
-                <div class="bg-white rounded-pill px-3 py-2 shadow-sm d-flex align-items-center">
-                    <i class="bi bi-search text-muted me-2"></i>
-                    <input type="text" style="border:none; outline:none;" placeholder="Search for courses...">
-                </div>
+            
                 <a href="notifications.html" class="btn btn-white shadow-sm rounded-circle p-2" title="Open notifications">
                     <i class="bi bi-bell-fill text-primary"></i>
                 </a>
             </div>
         </div>
 
+          <!-- site info grid -->
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-4 col-md-6">
+                <div class="grid-info mission-card">
+                    <span class="grid-label">Our Mission</span>
+                    <h5>Empower Every Learner</h5>
+                    <p>We help students improve outcomes with AI-driven insights, personalized guidance, and measurable academic progress.</p>
+                    <ol>
+                        <li>Predict performance from real study data.</li>
+                        <li>Highlight weak subjects early.</li>
+                        <li>Recommend targeted learning actions.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6">
+                <div class="grid-info vision-card">
+                    <span class="grid-label">Our Vision</span>
+                    <h5>Smarter Academic Growth</h5>
+                    <p>We aim to build an intelligent academic companion that makes learning adaptive, fair, and effective for all students.</p>
+                    <ol>
+                        <li>Deliver data-backed decisions for learners.</li>
+                        <li>Create continuous feedback loops.</li>
+                        <li>Support confidence through clear progress tracking.</li>
+                    </ol>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-12">
+                <div class="grid-info goals-card">
+                    <span class="grid-label">Core Goals</span>
+                    <h5>What We Focus On</h5>
+                    <p>Our platform is designed to transform raw marks into meaningful direction that students can act on right away.</p>
+                    <ol>
+                        <li>Compare peer trends responsibly.</li>
+                        <li>Continuously improve prediction quality.</li>
+                        <li>Enable better study planning with AI support.</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+
         <div class="row g-4 mb-4">
             <div class="col-md-6">
-                <div class="custom-card gradient-card-2 position-relative overflow-hidden">
+                <div class="custom-card gradient-card-low position-relative overflow-hidden" id="prediction-card">
                     <div class="position-relative z-1">
-                        <h5 class="mb-1">Latest Prediction</h5>
-                        <small class="opacity-75">From your most recent run</small>
-                        <h2 class="mt-3 fw-bold" id="predicted-score">--</h2>
-                        <span class="badge bg-white text-danger mt-2 rounded-pill px-3" id="risk-level-badge">Risk: --</span>
+                        <h5 class="mb-1 text-black fw-bold">Latest Prediction</h5>
+                        <small class="opacity-75 text-black">From your most recent run</small>
+                        <h2 class="mt-3 fw-bold shadow-sm" id="predicted-score">--</h2>
+                        <div class="d-flex flex-wrap gap-2 mt-2">
+                            <span class="badge rounded-pill px-3 comparison-chip" id="peer-average-badge">Peers Avg: --</span>
+                            <span class="badge rounded-pill px-3 comparison-chip" id="score-diff-badge">Diff: --</span>
+                        </div>
+                        <span class="badge bg-white text-medium mt-2 rounded-pill px-3" id="risk-level-badge">Risk: --</span>
                     </div>
                     <i class="bi bi-graph-up-arrow position-absolute bottom-0 end-0 mb-n2 me-n2 text-white opacity-25" style="font-size: 8rem;"></i>
                 </div>
@@ -96,7 +199,6 @@
                         <h6 class="fw-bold m-0">Subject Marks</h6>
                         <button class="btn btn-sm btn-outline-primary rounded-pill px-3" id="add-mark-row-btn">+ Add</button>
                     </div>
-                    <small class="text-muted d-block mb-3">Firestore: <code>users/{uid}.subject_marks</code></small>
 
                     <div id="marks-empty-state" class="alert alert-light border mb-3">
                         No subject marks found. Add subjects and save.
@@ -132,7 +234,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, query, where, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
@@ -323,7 +425,7 @@
                 const scoreValue = row.querySelector(".subject-score").value.trim();
 
                 if (!subject && !scoreValue) return;
-                if (!subject || !scoreValue) throw new Error("Har row me subject aur marks dono bharna zaruri hai.");
+                if (!subject || !scoreValue) throw new Error("Both subject name and marks are required for each entry.");
 
                 const score = Number(scoreValue);
                 if (!Number.isFinite(score) || score < 0 || score > 100) {
@@ -386,7 +488,7 @@
 
         async function saveSubjectMarks() {
             if (!currentUserId) {
-                setMarksStatus("User session nahi mila. Dubara login karein.", "error");
+                setMarksStatus("Couldn't Find User Session. Try logging again.", "error");
                 return;
             }
 
@@ -404,7 +506,7 @@
                 setMarksStatus("Marks successfully save ho gaye.", "success");
             } catch (error) {
                 console.error("Failed to save marks:", error);
-                setMarksStatus(error.message || "Marks save nahi ho paaye.", "error");
+                setMarksStatus(error.message || "Couldn't save the Marks", "error");
             }
         }
 
@@ -421,16 +523,57 @@
         function applyRiskBadge(riskLevel) {
             const riskBadge = document.getElementById("risk-level-badge");
             riskBadge.textContent = `Risk: ${riskLevel || "--"}`;
-            riskBadge.classList.remove("text-danger", "text-warning", "text-success");
+            riskBadge.classList.remove(
+                "text-danger",
+                "text-warning",
+                "text-success",
+                "text-high",
+                "text-medium",
+                "text-low",
+                "text-balanced",
+                "text-veryhigh",
+                "text-white"
+            );
 
             if (riskLevel === "HIGH") {
-                riskBadge.classList.add("text-danger");
+                riskBadge.classList.add("text-high");
             } else if (riskLevel === "MEDIUM") {
-                riskBadge.classList.add("text-warning");
+                riskBadge.classList.add("text-medium");
             } else if (riskLevel === "LOW") {
-                riskBadge.classList.add("text-success");
+                riskBadge.classList.add("text-low");
+            } else if (riskLevel === "BALANCED") {
+                riskBadge.classList.add("text-balanced");
+            } else if (riskLevel === "VERY HIGH") {
+                riskBadge.classList.add("text-veryhigh");
             } else {
-                riskBadge.classList.add("text-danger");
+                riskBadge.classList.add("text-white");
+            }
+        }
+
+        function applyPredictionCardGradient(riskLevel) {
+            const predictionCard = document.getElementById("prediction-card");
+            if (!predictionCard) return;
+
+            predictionCard.classList.remove(
+                "gradient-card-low",
+                "gradient-card-balanced",
+                "gradient-card-medium",
+                "gradient-card-high",
+                "gradient-card-very-high"
+            );
+
+            if (riskLevel === "LOW") {
+                predictionCard.classList.add("gradient-card-low");
+            } else if (riskLevel === "BALANCED") {
+                predictionCard.classList.add("gradient-card-balanced");
+            } else if (riskLevel === "MEDIUM") {
+                predictionCard.classList.add("gradient-card-medium");
+            } else if (riskLevel === "HIGH") {
+                predictionCard.classList.add("gradient-card-high");
+            } else if (riskLevel === "VERY HIGH") {
+                predictionCard.classList.add("gradient-card-very-high");
+            } else {
+                predictionCard.classList.add("gradient-card-low");
             }
         }
 
@@ -441,39 +584,82 @@
             predictedScore.textContent = Number.isFinite(score) ? `${score.toFixed(1)}%` : "--";
 
             applyRiskBadge(docData?.risk_level);
+            applyPredictionCardGradient(docData?.risk_level);
         }
 
-        function getCreatedAtValue(data) {
-            const createdAt = data?.created_at;
-            if (!createdAt) return 0;
-            if (typeof createdAt.toMillis === "function") return createdAt.toMillis();
-            const dateValue = new Date(createdAt).getTime();
-            return Number.isFinite(dateValue) ? dateValue : 0;
-        }
+        function renderPeerComparison(myScore, peerAverage, peerCount) {
+            const peerAverageBadge = document.getElementById("peer-average-badge");
+            const scoreDiffBadge = document.getElementById("score-diff-badge");
+            if (!peerAverageBadge || !scoreDiffBadge) return;
 
-        async function loadLatestPrediction(uid) {
-            const predictionsRef = collection(db, "predictions");
-            const q = query(predictionsRef, where("user_id", "==", uid));
-            const snapshot = await getDocs(q);
+            peerAverageBadge.className = "badge rounded-pill px-3 comparison-chip";
+            scoreDiffBadge.className = "badge rounded-pill px-3 comparison-chip";
 
-            if (snapshot.empty) {
-                renderPrediction(null);
+            if (!Number.isFinite(peerAverage)) {
+                peerAverageBadge.textContent = "Peers Avg: --";
+                scoreDiffBadge.textContent = "Diff: --";
                 return;
             }
 
-            let latest = null;
-            let latestTs = -1;
+            const totalPeers = Number.isFinite(peerCount) ? peerCount : 0;
+            peerAverageBadge.textContent = `Peers Avg: ${peerAverage.toFixed(1)}% (${totalPeers})`;
+
+            if (!Number.isFinite(myScore)) {
+                scoreDiffBadge.textContent = "Diff: --";
+                return;
+            }
+
+            const diff = myScore - peerAverage;
+            const sign = diff > 0 ? "+" : "";
+            scoreDiffBadge.textContent = `Diff: ${sign}${diff.toFixed(1)}%`;
+
+            if (diff > 0) {
+                scoreDiffBadge.classList.add("comparison-chip-positive");
+            } else if (diff < 0) {
+                scoreDiffBadge.classList.add("comparison-chip-negative");
+            }
+        }
+
+        async function loadLatestPrediction(uid) {
+            const usersRef = collection(db, "users");
+            const snapshot = await getDocs(usersRef);
+
+            if (snapshot.empty) {
+                renderPrediction(null);
+                renderPeerComparison(null, null, 0);
+                return;
+            }
+
+            let currentPrediction = null;
+            const peerScores = [];
 
             snapshot.forEach((docSnap) => {
                 const data = docSnap.data();
-                const ts = getCreatedAtValue(data);
-                if (ts > latestTs) {
-                    latestTs = ts;
-                    latest = data;
+                const predictedScore = Number(data?.predicted_score);
+                if (!Number.isFinite(predictedScore)) return;
+                const userId = String(docSnap.id || "").trim();
+                if (!userId) return;
+
+                if (userId === uid) {
+                    currentPrediction = {
+                        predicted_score: predictedScore,
+                        risk_level: data?.risk_level
+                    };
+                    return;
                 }
+
+                peerScores.push(predictedScore);
             });
 
-            renderPrediction(latest);
+            renderPrediction(currentPrediction);
+
+            if (!peerScores.length) {
+                renderPeerComparison(Number(currentPrediction?.predicted_score), null, 0);
+                return;
+            }
+
+            const peerAverage = peerScores.reduce((sum, value) => sum + value, 0) / peerScores.length;
+            renderPeerComparison(Number(currentPrediction?.predicted_score), peerAverage, peerScores.length);
         }
 
         onAuthStateChanged(auth, async (user) => {
@@ -496,7 +682,7 @@
             } catch (error) {
                 console.error("Failed to load dashboard data:", error);
                 renderPrediction(null);
-                setMarksStatus("Marks load nahi ho paaye.", "error");
+                setMarksStatus("Could not load marks.", "error");
             }
         });
 

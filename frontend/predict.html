@@ -202,7 +202,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, serverTimestamp, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
@@ -224,19 +224,19 @@
             "http://localhost:8000"
         ].filter(Boolean);
 
-        async function savePredictionToFirestore(prediction, inputData) {
+        async function savePredictionToUserCollection(prediction, inputData) {
             const user = auth.currentUser;
+            if (!user) throw new Error("User not logged in.");
 
-            await addDoc(collection(db, "predictions"), {
-                user_id: user ? user.uid : null,
+            await setDoc(doc(db, "users", user.uid), {
                 input_data: inputData,
                 average_score: prediction.average_score ?? null,
                 total_subjects: prediction.total_subjects ?? null,
                 predicted_score: prediction.predicted_score,
                 risk_level: prediction.risk_level,
                 placement_readiness: prediction.placement_readiness ?? null,
-                created_at: serverTimestamp()
-            });
+                prediction_updated_at: serverTimestamp()
+            }, { merge: true });
         }
 
         function normalizeUserSubjectMarks(userData) {
@@ -384,7 +384,7 @@
                 const averageScore = Number(data.average_score);
                 const subjectCount = Number(data.total_subjects);
 
-                await savePredictionToFirestore(
+                await savePredictionToUserCollection(
                     {
                         ...data,
                         average_score: Number.isFinite(averageScore) ? averageScore : null,
