@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Assistant</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-xl-10">
+                <div class="d-flex flex-wrap justify-content-between align-items-end mb-4 gap-2">
+                    <div>
+                        <h2 class="fw-bold mb-1"><i class="bi bi-chat-square-text-fill text-primary me-2"></i>RAG Assistant</h2>
+                        <p class="text-muted mb-0">Ask academic or programming questions from your indexed knowledge base.</p>
+                    </div>
+                </div>
+
+                <div class="custom-card mb-4">
+                    <label for="query" class="form-label fw-semibold">Your Question</label>
+                    <textarea id="query" class="form-control query-input" placeholder="Example: Explain overfitting with a simple machine learning example."></textarea>
+                    <div class="d-flex align-items-center gap-3 mt-3">
+                        <button id="ask-btn" class="btn btn-ask d-inline-flex align-items-center gap-2">
+                            <span id="ask-btn-text">Ask RAG Model</span>
+                            <span id="ask-loader" class="spinner-border spinner-border-sm d-none" aria-hidden="true"></span>
+                        </button>
+                        <small id="status-text" class="text-muted"></small>
+                    </div>
+                </div>
+
+                <div class="custom-card">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold m-0">Response</h5>
+                    </div>
+                    <div id="answer-box" class="text-muted">Your answer will appear here.</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="../../assets/js/student/pages/rag-assistant.js"></script>
+</body>
+</html>

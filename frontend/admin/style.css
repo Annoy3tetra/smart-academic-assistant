@@ -1,0 +1,213 @@
+:root {
+      --bg-body: #f8fafc;
+      --bg-surface: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --primary-soft: #eff6ff;
+      --success: #10b981;
+      --success-bg: #ecfdf5;
+      --warning: #f59e0b;
+      --warning-bg: #fffbeb;
+      --danger: #ef4444;
+      --danger-bg: #fef2f2;
+      --border: #e2e8f0;
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+      --radius: 12px;
+    }
+
+    body {
+      background-color: var(--bg-body);
+      color: var(--text-main);
+      font-family: 'Inter', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 80px; 
+    }
+    .app-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 70px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+    }
+
+    .brand-text {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-main);
+      letter-spacing: -0.025em;
+    }
+
+    .panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-sm);
+      padding: 1.5rem;
+      height: 100%;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .panel-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .kpi-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      box-shadow: var(--shadow-sm);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .kpi-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; bottom: 0;
+      width: 4px;
+    }
+    .kpi-1::after { background: var(--primary); }
+    .kpi-2::after { background: var(--success); }
+    .kpi-3::after { background: var(--danger); }
+    .kpi-4::after { background: var(--warning); }
+
+    .kpi-label { font-size: 0.8rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .kpi-value { font-size: 2rem; font-weight: 800; line-height: 1; color: var(--text-main); }
+    .kpi-sub { font-size: 0.85rem; color: var(--text-muted); }
+
+    .form-control, .form-select {
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.6rem 1rem;
+      font-size: 0.9rem;
+      background: var(--bg-body);
+      transition: all 0.2s;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      background: #fff;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px var(--primary-soft);
+    }
+
+    .btn-custom {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+      border: none;
+    }
+    
+    .btn-primary-c { background: var(--primary); color: white; }
+    .btn-primary-c:hover { background: var(--primary-hover); transform: translateY(-1px); }
+    
+    .btn-ghost { background: transparent; color: var(--text-muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { background: var(--bg-body); color: var(--text-main); border-color: var(--text-muted); }
+
+    .table-container {
+      max-height: 500px;
+      overflow-y: auto;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+    }
+
+    .table {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+    
+    .table thead th {
+      background: var(--bg-body);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-bottom: 1px solid var(--border);
+      padding: 1rem;
+    }
+    
+    .table tbody td {
+      padding: 1rem;
+      vertical-align: middle;
+      border-bottom: 1px solid var(--border);
+    }
+    
+    .table tbody tr:hover { background-color: var(--primary-soft); }
+
+    .badge-status {
+      padding: 0.35em 0.8em;
+      border-radius: 99px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+    .status-ok { background: var(--success-bg); color: var(--success); }
+    .status-warn { background: var(--warning-bg); color: var(--warning); }
+    .status-risk { background: var(--danger-bg); color: var(--danger); }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px dashed var(--border);
+    }
+    .detail-row:last-child { border-bottom: none; }
+    
+    .progress-track {
+      height: 8px;
+      background: var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: 5px;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      border-radius: 10px;
+    }
+
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+    .text-sm { font-size: 0.85rem; }
+    .font-bold { font-weight: 700; }
+    .empty-state { text-align: center; padding: 2rem; color: var(--text-muted); font-style: italic; }
+    .course-item { background: var(--bg-body); padding: 0.75rem; border-radius: 8px; margin-bottom: 0.5rem; border: 1px solid transparent; transition: 0.2s; }
+    .course-item:hover { border-color: var(--primary); background: #fff; }
+
+    @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+    .loading-pulse { animation: pulse 1.5s infinite; }

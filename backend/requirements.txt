@@ -22,3 +22,4 @@ google-generati
 veai
 google-genai
 pydantic[email]
+sentence_transformers
