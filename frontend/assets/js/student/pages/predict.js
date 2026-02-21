@@ -1,6 +1,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, serverTimestamp, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
@@ -35,6 +35,33 @@
                 placement_readiness: prediction.placement_readiness ?? null,
                 prediction_updated_at: serverTimestamp()
             }, { merge: true });
+
+            try {
+                await addDoc(collection(db, "predictions"), {
+                    user_id: user.uid,
+                    average_score: prediction.average_score ?? null,
+                    total_subjects: prediction.total_subjects ?? null,
+                    predicted_score: prediction.predicted_score,
+                    risk_level: prediction.risk_level,
+                    placement_readiness: prediction.placement_readiness ?? null,
+                    input_data: inputData,
+                    created_at: serverTimestamp()
+                });
+            } catch (error) {
+                console.warn("Failed to save prediction history:", error);
+            }
+
+            try {
+                window.localStorage.setItem("studentLatestPrediction", JSON.stringify({
+                    uid: user.uid,
+                    predicted_score: prediction.predicted_score,
+                    risk_level: prediction.risk_level,
+                    placement_readiness: prediction.placement_readiness ?? null,
+                    updated_at: new Date().toISOString()
+                }));
+            } catch (error) {
+                console.warn("Failed to cache latest prediction locally:", error);
+            }
         }
 
         function normalizeUserSubjectMarks(userData) {

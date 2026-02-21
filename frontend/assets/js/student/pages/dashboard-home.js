@@ -4,7 +4,7 @@
 
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
@@ -349,9 +349,11 @@
 
         function renderPrediction(docData) {
             const predictedScore = document.getElementById("predicted-score");
+            if (!predictedScore) return;
 
-            const score = Number(docData?.predicted_score);
-            predictedScore.textContent = Number.isFinite(score) ? `${score.toFixed(1)}%` : "--";
+            const score = extractPredictedScore(docData);
+            predictedScore.textContent = Number.isFinite(score) ? `${score.toFixed(1)}%` : "No prediction yet";
+            predictedScore.classList.add("text-dark");
 
             applyRiskBadge(docData?.risk_level);
             applyPredictionCardGradient(docData?.risk_level);
@@ -390,46 +392,163 @@
             }
         }
 
-        async function loadLatestPrediction(uid) {
-            const usersRef = collection(db, "users");
-            const snapshot = await getDocs(usersRef);
+        function parseNumeric(value) {
+            if (typeof value === "number") return Number.isFinite(value) ? value : null;
+            if (typeof value === "string") {
+                const cleaned = value.trim();
+                const direct = Number(cleaned);
+                if (Number.isFinite(direct)) return direct;
+                const match = cleaned.match(/-?\d+(\.\d+)?/);
+                if (match) {
+                    const parsed = Number(match[0]);
+                    return Number.isFinite(parsed) ? parsed : null;
+                }
+            }
+            return null;
+        }
 
-            if (snapshot.empty) {
-                renderPrediction(null);
-                renderPeerComparison(null, null, 0);
+        function extractPredictedScore(data) {
+            const candidates = [
+                data?.predicted_score,
+                data?.predictedScore,
+                data?.latest_prediction?.predicted_score
+            ];
+
+            for (const value of candidates) {
+                const parsed = parseNumeric(value);
+                if (Number.isFinite(parsed)) return parsed;
+            }
+
+            return null;
+        }
+
+        async function getLatestPredictionFromPredictionsCollection(uid) {
+            try {
+                const pickLatest = (snapshot) => {
+                    let latest = null;
+                    let latestMs = -1;
+
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data() || {};
+                        const score = extractPredictedScore(data);
+                        if (!Number.isFinite(score)) return;
+
+                        const createdAtMs = data?.created_at?.toMillis ? data.created_at.toMillis() : 0;
+                        if (!latest || createdAtMs >= latestMs) {
+                            latest = data;
+                            latestMs = createdAtMs;
+                        }
+                    });
+
+                    return latest;
+                };
+
+                const predQuery = query(collection(db, "predictions"), where("user_id", "==", uid));
+                let snapshot = await getDocs(predQuery);
+                let latest = snapshot.empty ? null : pickLatest(snapshot);
+
+                if (!latest) {
+                    snapshot = await getDocs(collection(db, "predictions"));
+                    const fallbackDocs = [];
+                    snapshot.forEach((docSnap) => {
+                        const data = docSnap.data() || {};
+                        const ownerId = String(
+                            data?.user_id ?? data?.uid ?? data?.userId ?? data?.student_uid ?? ""
+                        ).trim();
+                        if (ownerId === uid) fallbackDocs.push(docSnap);
+                    });
+
+                    latest = pickLatest({
+                        forEach: (callback) => fallbackDocs.forEach(callback)
+                    });
+                }
+
+                if (!latest) return null;
+                return {
+                    predicted_score: extractPredictedScore(latest),
+                    risk_level: latest?.risk_level ?? latest?.riskLevel
+                };
+            } catch (error) {
+                console.warn("Predictions collection fallback unavailable:", error);
+                return null;
+            }
+        }
+
+        function getPredictionFromLocalCache(uid) {
+            try {
+                const raw = window.localStorage.getItem("studentLatestPrediction");
+                if (!raw) return null;
+                const parsed = JSON.parse(raw);
+                if (!parsed || String(parsed.uid || "").trim() !== String(uid || "").trim()) return null;
+                const score = extractPredictedScore(parsed);
+                if (!Number.isFinite(score)) return null;
+                return {
+                    predicted_score: score,
+                    risk_level: parsed.risk_level ?? parsed.riskLevel
+                };
+            } catch (error) {
+                console.warn("Invalid cached prediction:", error);
+                return null;
+            }
+        }
+
+        async function loadLatestPrediction(uid) {
+            let currentPrediction = {
+                predicted_score: null,
+                risk_level: null
+            };
+
+            const cachedPrediction = getPredictionFromLocalCache(uid);
+            if (cachedPrediction) currentPrediction = cachedPrediction;
+
+            try {
+                const currentUserDoc = await getDoc(doc(db, "users", uid));
+                const currentUserData = currentUserDoc.exists() ? currentUserDoc.data() : null;
+                const scoreFromUser = extractPredictedScore(currentUserData);
+                if (Number.isFinite(scoreFromUser)) {
+                    currentPrediction = {
+                        predicted_score: scoreFromUser,
+                        risk_level: currentUserData?.risk_level ?? currentUserData?.riskLevel
+                    };
+                }
+            } catch (error) {
+                console.warn("Could not load prediction from users doc:", error);
+            }
+
+            if (!Number.isFinite(currentPrediction.predicted_score)) {
+                const fallbackPrediction = await getLatestPredictionFromPredictionsCollection(uid);
+                if (fallbackPrediction) currentPrediction = fallbackPrediction;
+            }
+
+            const normalizedCurrentScore = extractPredictedScore(currentPrediction);
+            renderPrediction(currentPrediction);
+            renderPeerComparison(Number(normalizedCurrentScore), null, 0);
+
+            let snapshot = null;
+            try {
+                snapshot = await getDocs(collection(db, "users"));
+            } catch (error) {
+                console.warn("Peer comparison unavailable:", error);
                 return;
             }
 
-            let currentPrediction = null;
+            if (!snapshot || snapshot.empty) return;
+
             const peerScores = [];
-
             snapshot.forEach((docSnap) => {
-                const data = docSnap.data();
-                const predictedScore = Number(data?.predicted_score);
-                if (!Number.isFinite(predictedScore)) return;
                 const userId = String(docSnap.id || "").trim();
-                if (!userId) return;
-
-                if (userId === uid) {
-                    currentPrediction = {
-                        predicted_score: predictedScore,
-                        risk_level: data?.risk_level
-                    };
-                    return;
-                }
-
-                peerScores.push(predictedScore);
+                if (!userId || userId === uid) return;
+                const predictedScore = extractPredictedScore(docSnap.data());
+                if (Number.isFinite(predictedScore)) peerScores.push(predictedScore);
             });
 
-            renderPrediction(currentPrediction);
-
             if (!peerScores.length) {
-                renderPeerComparison(Number(currentPrediction?.predicted_score), null, 0);
+                renderPeerComparison(Number(normalizedCurrentScore), null, 0);
                 return;
             }
 
             const peerAverage = peerScores.reduce((sum, value) => sum + value, 0) / peerScores.length;
-            renderPeerComparison(Number(currentPrediction?.predicted_score), peerAverage, peerScores.length);
+            renderPeerComparison(Number(normalizedCurrentScore), peerAverage, peerScores.length);
         }
 
         onAuthStateChanged(auth, async (user) => {
