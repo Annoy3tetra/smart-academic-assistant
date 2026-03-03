@@ -290,9 +290,30 @@
             await loadLearningRecommendations(normalized);
         }
 
+        function normalizeRiskLevel(riskLevel) {
+            if (riskLevel === null || riskLevel === undefined) return null;
+
+            const normalized = String(riskLevel)
+                .trim()
+                .replace(/[_-]+/g, " ")
+                .replace(/\s+/g, " ")
+                .toUpperCase();
+
+            const withoutRiskSuffix = normalized.replace(/\s+RISK$/, "").trim();
+            if (withoutRiskSuffix === "VERYHIGH") return "VERY HIGH";
+            if (withoutRiskSuffix === "BALANCE") return "BALANCED";
+
+            if (["LOW", "BALANCED", "MEDIUM", "HIGH", "VERY HIGH"].includes(withoutRiskSuffix)) {
+                return withoutRiskSuffix;
+            }
+
+            return withoutRiskSuffix || null;
+        }
+
         function applyRiskBadge(riskLevel) {
             const riskBadge = document.getElementById("risk-level-badge");
-            riskBadge.textContent = `Risk: ${riskLevel || "--"}`;
+            const normalizedRisk = normalizeRiskLevel(riskLevel);
+            riskBadge.textContent = `Risk: ${normalizedRisk || "--"}`;
             riskBadge.classList.remove(
                 "text-danger",
                 "text-warning",
@@ -305,15 +326,15 @@
                 "text-white"
             );
 
-            if (riskLevel === "HIGH") {
+            if (normalizedRisk === "HIGH") {
                 riskBadge.classList.add("text-high");
-            } else if (riskLevel === "MEDIUM") {
+            } else if (normalizedRisk === "MEDIUM") {
                 riskBadge.classList.add("text-medium");
-            } else if (riskLevel === "LOW") {
+            } else if (normalizedRisk === "LOW") {
                 riskBadge.classList.add("text-low");
-            } else if (riskLevel === "BALANCED") {
+            } else if (normalizedRisk === "BALANCED") {
                 riskBadge.classList.add("text-balanced");
-            } else if (riskLevel === "VERY HIGH") {
+            } else if (normalizedRisk === "VERY HIGH") {
                 riskBadge.classList.add("text-veryhigh");
             } else {
                 riskBadge.classList.add("text-white");
@@ -323,6 +344,14 @@
         function applyPredictionCardGradient(riskLevel) {
             const predictionCard = document.getElementById("prediction-card");
             if (!predictionCard) return;
+            const normalizedRisk = normalizeRiskLevel(riskLevel);
+            const gradientByRisk = {
+                LOW: "linear-gradient(135deg, #8fd884 0%, #48db27 100%)",
+                BALANCED: "linear-gradient(135deg, hsl(62, 85%, 74%) 0%, #e2f208 100%)",
+                MEDIUM: "linear-gradient(135deg, #8b86c1 0%, #3518da 100%)",
+                HIGH: "linear-gradient(135deg, #eca817 0%, #f4c311 100%)",
+                "VERY HIGH": "linear-gradient(135deg, #c08c7e 0%, #d13013 100%)"
+            };
 
             predictionCard.classList.remove(
                 "gradient-card-low",
@@ -332,19 +361,21 @@
                 "gradient-card-very-high"
             );
 
-            if (riskLevel === "LOW") {
+            if (normalizedRisk === "LOW") {
                 predictionCard.classList.add("gradient-card-low");
-            } else if (riskLevel === "BALANCED") {
+            } else if (normalizedRisk === "BALANCED") {
                 predictionCard.classList.add("gradient-card-balanced");
-            } else if (riskLevel === "MEDIUM") {
+            } else if (normalizedRisk === "MEDIUM") {
                 predictionCard.classList.add("gradient-card-medium");
-            } else if (riskLevel === "HIGH") {
+            } else if (normalizedRisk === "HIGH") {
                 predictionCard.classList.add("gradient-card-high");
-            } else if (riskLevel === "VERY HIGH") {
+            } else if (normalizedRisk === "VERY HIGH") {
                 predictionCard.classList.add("gradient-card-very-high");
             } else {
                 predictionCard.classList.add("gradient-card-low");
             }
+
+            predictionCard.style.background = gradientByRisk[normalizedRisk] || gradientByRisk.LOW;
         }
 
         function renderPrediction(docData) {
