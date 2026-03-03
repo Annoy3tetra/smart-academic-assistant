@@ -11,15 +11,14 @@ python-dotenv
 
 python-jose[cryptography]
 passlib[bcrypt]
-bcrypt
+bcrypt==4.0.1
 numpy
 pandas
 scikit-learn
 joblib
 
 sentence-transformers
-google-generati
-veai
+google-generativeai
 google-genai
 pydantic[email]
 sentence_transformers

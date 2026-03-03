@@ -1,16 +1,8 @@
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+        import { initializeApp } from "../../lib/firebase-app-compat.js";
+        import { getAuth, onAuthStateChanged } from "../../lib/firebase-auth-compat.js";
+        import { getFirestore, collection, getDocs } from "../../lib/firebase-firestore-compat.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
-            authDomain: "testing-c2417.firebaseapp.com",
-            projectId: "testing-c2417",
-            storageBucket: "testing-c2417.firebasestorage.app",
-            messagingSenderId: "27724276111",
-            appId: "1:27724276111:web:a289d7642e1227818d6bfa",
-            measurementId: "G-KTK16HRSX4"
-        };
+        const firebaseConfig = {};
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -105,7 +97,7 @@
                 });
 
                 if (!courses.length) {
-                    statusEl.textContent = "No course videos found in Firestore collection: courses";
+                    statusEl.textContent = "No course videos found in database collection: courses";
                     return;
                 }
 
@@ -119,7 +111,7 @@
                 statusEl.classList.add("d-none");
             } catch (error) {
                 console.error("Course fetch failed:", error);
-                statusEl.textContent = "Failed to load courses from Firestore.";
+                statusEl.textContent = "Failed to load courses from database.";
                 statusEl.classList.remove("d-none");
             }
         }

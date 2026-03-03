@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey, Float
+from sqlalchemy import Column, Integer, String, ForeignKey, Float, DateTime, JSON, UniqueConstraint, func
 from sqlalchemy.orm import relationship
 from app.core.database import Base
 
@@ -130,3 +130,17 @@ class Prediction(Base):
     risk_level = Column(String, nullable=False)
 
     student = relationship("Student", back_populates="prediction")
+
+
+class AppDocument(Base):
+    __tablename__ = "app_documents"
+    __table_args__ = (
+        UniqueConstraint("collection", "doc_id", name="uq_app_documents_collection_doc_id"),
+    )
+
+    id = Column(Integer, primary_key=True, index=True)
+    collection = Column(String, nullable=False, index=True)
+    doc_id = Column(String, nullable=False, index=True)
+    payload = Column(JSON, nullable=False, default=dict)
+    created_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now())
+    updated_at = Column(DateTime(timezone=True), nullable=False, server_default=func.now(), onupdate=func.now())

@@ -1,1 +1,1 @@
-from .user import User, Student, Subject, Mark, Attendance, Prediction
+from .user import User, Student, Subject, Mark, Attendance, Prediction, AppDocument

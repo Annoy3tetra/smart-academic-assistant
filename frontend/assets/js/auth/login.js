@@ -1,16 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "../lib/firebase-app-compat.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "../lib/firebase-auth-compat.js";
+        import { getFirestore, doc, setDoc } from "../lib/firebase-firestore-compat.js";
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",
-            authDomain: "testing-c2417.firebaseapp.com",
-            projectId: "testing-c2417",
-            storageBucket: "testing-c2417.firebasestorage.app",
-            messagingSenderId: "27724276111",
-            appId: "1:27724276111:web:a289d7642e1227818d6bfa",
-            measurementId: "G-KTK16HRSX4"
-        };
+        const firebaseConfig = {};
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
@@ -77,7 +69,10 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
                 else {
                     if (!fullName) throw new Error("Please enter your full name.");
 
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+                    const userCredential = await createUserWithEmailAndPassword(auth, email, password, {
+                        name: fullName,
+                        role
+                    });
                     const user = userCredential.user;
 
                     await setDoc(doc(db, "users", user.uid), {
@@ -99,10 +94,12 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
         });
 
         function formatErrorMessage(msg) {
+            if (msg.includes("Email already exists")) return "Email is already registered.";
+            if (msg.includes("Invalid credentials")) return "Invalid Email or Password.";
             if (msg.includes("auth/email-already-in-use")) return "Email is already registered.";
             if (msg.includes("auth/weak-password")) return "Password should be at least 6 characters.";
             if (msg.includes("auth/invalid-credential")) return "Invalid Email or Password.";
-            return msg.replace("Firebase: ", "");
+            return msg;
         }
 
 async function loginUser(event) {

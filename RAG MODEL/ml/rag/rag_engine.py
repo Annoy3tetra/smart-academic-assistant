@@ -4,8 +4,15 @@ import io
 import contextlib
 import numpy as np
 from sentence_transformers import SentenceTransformer
-from google import genai
-from google.genai.errors import APIError
+# the google-genai client package provides `google.genai` and submodules.
+# install via `pip install google-genai-client` (or `google-genai` depending on version).
+# we import APIError separately so it can be referenced in exception handling.
+try:
+    from google import genai
+except ImportError:
+    genai = None
+# APIError is imported dynamically inside generate_answer to avoid linter complaints
+APIError = None  # will be set at runtime
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -75,6 +82,18 @@ def generate_answer(query):
             "Missing Gemini API key. Set GEMINI_API_KEY (or GOOGLE_API_KEY) "
             f"in your environment or .env file at {PROJECT_ROOT}\\.env and try again."
         )
+
+    if genai is None:
+        return (
+            "The google-genai client library is not installed. "
+            "Install it with `pip install google-genai-client` (or `google-genai`) and retry."
+        )
+
+    # import APIError only if genai is available; this avoids editor/linter warnings
+    try:
+        from google.genai.errors import APIError  # type: ignore
+    except ImportError:
+        APIError = Exception  # fallback so exception handler still works
 
     client = genai.Client(api_key=api_key)
 

@@ -7,7 +7,7 @@
   - `RAG MODEL/` alag ML + RAG assets aur scripts hold karta hai
 - Data 2 jagah store hota hai:
   - Firebase Firestore (live app data)
-  - SQL DB (`backend/user.db` by default, via SQLAlchemy models)
+  - PostgreSQL (via SQLAlchemy models + Alembic)
 
 ## 2. Entry Flow (User App Start)
 1. User `frontend/login.html` pe login/signup karta hai (Firebase Auth).
@@ -103,7 +103,7 @@
 
 ### 5.2 Core Layers
 - Config: `backend/app/core/config.py`  
-  - `DATABASE_URL` env se, warna SQLite fallback.
+  - `DATABASE_URL` env se load hota hai aur PostgreSQL URL required hai.
 - DB: `backend/app/core/database.py`  
   - engine, session, Base.
 - Security: `backend/app/core/security.py`  

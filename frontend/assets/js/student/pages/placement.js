@@ -1,8 +1,8 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+import { initializeApp } from "../../lib/firebase-app-compat.js";
+import { getAuth, onAuthStateChanged } from "../../lib/firebase-auth-compat.js";
+import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "../../lib/firebase-firestore-compat.js";
 
-const cfg={apiKey:"AIzaSyDJlQru_9q4kcnDmK6sFX0W-_GP3n0YYrA",authDomain:"testing-c2417.firebaseapp.com",projectId:"testing-c2417",storageBucket:"testing-c2417.firebasestorage.app",messagingSenderId:"27724276111",appId:"1:27724276111:web:a289d7642e1227818d6bfa",measurementId:"G-KTK16HRSX4"};
+const cfg={};
 const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
 
 const S={user:null,userDoc:{},tracker:null,bench:null,timer:null};
