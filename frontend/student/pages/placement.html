@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Placement Tracker</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+      <link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="d-flex flex-wrap justify-content-between align-items-center gap-3 mb-4">
+    <div class="hero">
+      <h1>Placement Tracker</h1>
+      <p id="welcomeText">Loading user profile...</p>
+    </div>
+    <div class="d-flex gap-2">
+      <button id="markTodayBtn" class="btn-pill btn-soft">Mark Today Done</button>
+      <button id="syncBtn" class="btn-pill btn-main">Sync Data</button>
+    </div>
+  </header>
+
+  <section class="row g-3 mb-4">
+    <div class="col-6 col-md-3">
+      <div class="metric">
+        <h6>Readiness</h6>
+        <div class="v" id="mReadiness">--%</div>
+        <div class="s" id="mReadinessSub">Calculating...</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="metric">
+        <h6>Tasks</h6>
+        <div class="v" id="mTasks">0/0</div>
+        <div class="s">Completion rate</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="metric">
+        <h6>Streak</h6>
+        <div class="v" id="mStreak">0</div>
+        <div class="s" id="mStreakSub">Days active</div>
+      </div>
+    </div>
+    <div class="col-6 col-md-3">
+      <div class="metric">
+        <h6>Apps</h6>
+        <div class="v" id="mApps">0</div>
+        <div class="s" id="mAppsSub">Active rounds</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="row g-4">
+    <div class="col-lg-8 d-flex flex-column gap-4">
+      
+      <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="title"><i class="bi bi-check2-square text-primary"></i> Execution Planner</h2>
+          <div class="d-flex align-items-center gap-2" style="width: 120px;">
+            <div class="bar w-100"><div class="fill" id="taskFill" style="width:0%"></div></div>
+            <span class="meta" id="taskProgressText">0%</span>
+          </div>
+        </div>
+
+        <div class="row g-2 mb-2">
+          <div class="col-md-5"><input id="taskTitle" class="form-control" placeholder="Task description..."></div>
+          <div class="col-md-3"><select id="taskCategory" class="form-select"><option value="dsa">DSA</option><option value="core">Core CS</option><option value="aptitude">Aptitude</option><option value="behavioral">Behavioral</option></select></div>
+          <div class="col-md-4"><input id="taskDue" type="date" class="form-control"></div>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-md-8"><input id="taskLink" class="form-control" placeholder="Link (Optional)"></div>
+          <div class="col-md-2 d-grid"><button id="addTask" class="btn-pill btn-main">Add</button></div>
+          <div class="col-md-2 d-grid"><button id="seedTasks" class="btn-pill btn-soft">Auto</button></div>
+        </div>
+        <div id="taskList" class="list"></div>
+      </div>
+
+      <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="title"><i class="bi bi-briefcase text-primary"></i> Application Pipeline</h2>
+        </div>
+        <div class="row g-2 mb-3">
+          <div class="col-md-4"><input id="company" class="form-control" placeholder="Company"></div>
+          <div class="col-md-3"><input id="role" class="form-control" placeholder="Role"></div>
+          <div class="col-md-3"><select id="appStatus" class="form-select"><option>Applied</option><option>OA</option><option>Interview</option><option>Offer</option><option>Rejected</option></select></div>
+          <div class="col-md-2 d-grid"><button id="addApp" class="btn-pill btn-main">Track</button></div>
+        </div>
+        <div id="appList" class="list"></div>
+      </div>
+    </div>
+
+    <div class="col-lg-4 d-flex flex-column gap-4">
+      
+      <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h2 class="title">Skill Matrix</h2>
+          <span class="meta">0-100 Scale</span>
+        </div>
+        <div class="skillgrid mb-3">
+          <div class="skillbox"><label for="sDsa">DSA</label><input id="sDsa" type="number" min="0" max="100"></div>
+          <div class="skillbox"><label for="sApt">Aptitude</label><input id="sApt" type="number" min="0" max="100"></div>
+          <div class="skillbox"><label for="sCore">Core</label><input id="sCore" type="number" min="0" max="100"></div>
+          <div class="skillbox"><label for="sComm">Comm</label><input id="sComm" type="number" min="0" max="100"></div>
+          <div class="skillbox"><label for="sProj">Project</label><input id="sProj" type="number" min="0" max="100"></div>
+          <div class="skillbox"><label for="sResume">Resume</label><input id="sResume" type="number" min="0" max="100"></div>
+        </div>
+        
+        <h2 class="title mb-2" style="font-size:0.9rem">Activity Log</h2>
+        <div class="row g-2 mb-2">
+          <div class="col-4"><input id="aDsa" type="number" class="form-control" placeholder="DSA Q"></div>
+          <div class="col-4"><input id="aApt" type="number" class="form-control" placeholder="Apt Q"></div>
+          <div class="col-4"><input id="aMock" type="number" class="form-control" placeholder="Mocks"></div>
+        </div>
+        <div class="meta text-center" id="skillHint">Update stats to recalibrate.</div>
+      </div>
+
+      <div class="panel">
+         <h2 class="title mb-3">Benchmark</h2>
+         <div id="benchList" class="list"></div>
+      </div>
+
+      <div class="panel">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h2 class="title">Insights</h2>
+          <span class="meta" id="statusText">Ready</span>
+        </div>
+        <textarea id="note" class="form-control mb-2" rows="3" placeholder="Notes..."></textarea>
+        <div id="insightList" class="list"></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script type="module" src="../../assets/js/student/pages/placement.js"></script>
+</body>
+</html>

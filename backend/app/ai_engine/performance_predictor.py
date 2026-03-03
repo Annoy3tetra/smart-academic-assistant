@@ -13,11 +13,15 @@ def predict_performance(average_score, attendance, total_subjects):
     prediction = model.predict(features)[0]
     prediction = max(0, min(100, prediction))
     # Risk classification
-    if prediction >= 75:
+    if prediction >= 80:
         risk = "LOW"
-    elif prediction >= 60:
+    elif prediction <80 and prediction >= 60:
+        risk = "BALANCED"
+    elif prediction <60 and prediction >= 40:
         risk = "MEDIUM"
-    else:
+    elif prediction <40 and prediction >= 20:
         risk = "HIGH"
+    else:
+        risk = "VERY HIGH"
 
     return float(round(prediction, 2)), risk
