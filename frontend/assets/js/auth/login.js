@@ -1,140 +1,105 @@
-import { initializeApp } from "../lib/firebase-app-compat.js";
-        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "../lib/firebase-auth-compat.js";
-        import { getFirestore, doc, setDoc } from "../lib/firebase-firestore-compat.js";
+import { getAuth, loginWithEmailAndPassword, signupWithEmailAndPassword } from "../lib/auth-store.js";
+import { getDataStore, doc, setDoc } from "../lib/data-store.js";
 
-        const firebaseConfig = {};
+const auth = getAuth();
+const store = getDataStore();
 
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+let isLoginMode = true;
+const form = document.getElementById("authForm");
+const statusMsg = document.getElementById("status-msg");
 
-        let isLoginMode = true;
-        const form = document.getElementById('authForm');
-        const statusMsg = document.getElementById('status-msg');
+function updateUI() {
+    const nameField = document.getElementById("nameField");
+    const roleField = document.getElementById("roleField");
+    const formTitle = document.getElementById("formTitle");
+    const submitBtn = document.getElementById("submitBtn");
+    const toggleText = document.getElementById("toggleText");
+    const toggleBtn = document.getElementById("toggleBtn");
 
-        document.getElementById('toggleBtn').addEventListener('click', (e) => {
-            e.preventDefault();
-            isLoginMode = !isLoginMode;
-            updateUI();
-        });
+    if (isLoginMode) {
+        nameField.classList.add("hidden");
+        roleField.classList.add("hidden");
+        formTitle.textContent = "Welcome back, Sir.";
+        submitBtn.textContent = "Sign In";
+        toggleText.innerHTML = 'New here? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Create Account</a>';
+    } else {
+        nameField.classList.remove("hidden");
+        roleField.classList.remove("hidden");
+        formTitle.textContent = "Create your Academic ID";
+        submitBtn.textContent = "Sign Up";
+        toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Login</a>';
+    }
 
-        function updateUI() {
-            const nameField = document.getElementById('nameField');
-            const roleField = document.getElementById('roleField');
-            const formTitle = document.getElementById('formTitle');
-            const submitBtn = document.getElementById('submitBtn');
-            const toggleText = document.getElementById('toggleText');
-            const toggleBtn = document.getElementById('toggleBtn');
+    document.getElementById("toggleBtn").addEventListener("click", (event) => {
+        event.preventDefault();
+        isLoginMode = !isLoginMode;
+        updateUI();
+    });
+    statusMsg.classList.add("d-none");
+}
 
-            if (isLoginMode) {
-                nameField.classList.add('hidden');
-                roleField.classList.add('hidden');
-                formTitle.textContent = "Welcome back, Sir.";
-                submitBtn.textContent = "Sign In";
-                toggleText.innerHTML = 'New here? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Create Account</a>';
-            } else {
-                nameField.classList.remove('hidden');
-                roleField.classList.remove('hidden');
-                formTitle.textContent = "Create your Academic ID";
-                submitBtn.textContent = "Sign Up";
-                toggleText.innerHTML = 'Already have an account? <a href="#" id="toggleBtn" class="text-primary text-decoration-none fw-bold">Login</a>';
-            }
-            document.getElementById('toggleBtn').addEventListener('click', (e) => {
-                e.preventDefault();
-                isLoginMode = !isLoginMode;
-                updateUI();
-            });
-            statusMsg.classList.add('d-none');
-        }
+document.getElementById("toggleBtn").addEventListener("click", (event) => {
+    event.preventDefault();
+    isLoginMode = !isLoginMode;
+    updateUI();
+});
 
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const fullName = document.getElementById('fullName').value;
-            const role = document.getElementById('role').value;
-
-            statusMsg.classList.remove('d-none', 'alert-danger', 'alert-success');
-            statusMsg.classList.add('alert-info');
-            statusMsg.textContent = isLoginMode ? "Authenticating..." : "Creating Account...";
-
-            try {
-                if (isLoginMode) {
-                    const userCredential = await signInWithEmailAndPassword(auth, email, password);
-                    statusMsg.classList.replace('alert-info', 'alert-success');
-                    statusMsg.textContent = "Login Successful! Redirecting...";
-                    setTimeout(() => window.location.href = "index.html", 1000);
-                } 
-                else {
-                    if (!fullName) throw new Error("Please enter your full name.");
-
-                    const userCredential = await createUserWithEmailAndPassword(auth, email, password, {
-                        name: fullName,
-                        role
-                    });
-                    const user = userCredential.user;
-
-                    await setDoc(doc(db, "users", user.uid), {
-                        name: fullName,
-                        email: email,
-                        role: role,
-                        createdAt: new Date()
-                    });
-
-                    statusMsg.classList.replace('alert-info', 'alert-success');
-                    statusMsg.textContent = "Account Created! Redirecting...";
-                    setTimeout(() => window.location.href = "index.html", 1500);
-                }
-            } catch (error) {
-                console.error(error);
-                statusMsg.classList.replace('alert-info', 'alert-danger');
-                statusMsg.textContent = formatErrorMessage(error.message);
-            }
-        });
-
-        function formatErrorMessage(msg) {
-            if (msg.includes("Email already exists")) return "Email is already registered.";
-            if (msg.includes("Invalid credentials")) return "Invalid Email or Password.";
-            if (msg.includes("auth/email-already-in-use")) return "Email is already registered.";
-            if (msg.includes("auth/weak-password")) return "Password should be at least 6 characters.";
-            if (msg.includes("auth/invalid-credential")) return "Invalid Email or Password.";
-            return msg;
-        }
-
-async function loginUser(event) {
-    event.preventDefault(); 
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
 
     const email = document.getElementById("email").value;
     const password = document.getElementById("password").value;
+    const fullName = document.getElementById("fullName").value;
+    const role = document.getElementById("role").value;
+
+    statusMsg.classList.remove("d-none", "alert-danger", "alert-success");
+    statusMsg.classList.add("alert-info");
+    statusMsg.textContent = isLoginMode ? "Authenticating..." : "Creating Account...";
 
     try {
-        const response = await fetch("http://127.0.0.1:8000/login", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                email: email,
-                password: password
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            alert("Login successful!");
-            console.log(data);
-
-            localStorage.setItem("token", data.access_token);
-
-            window.location.href = "dashboard.html";
-        } else {
-            alert(data.detail || "Login failed");
+        if (isLoginMode) {
+            await loginWithEmailAndPassword(email, password);
+            statusMsg.classList.replace("alert-info", "alert-success");
+            statusMsg.textContent = "Login Successful! Redirecting...";
+            setTimeout(() => {
+                window.location.href = "index.html";
+            }, 1000);
+            return;
         }
 
+        if (!fullName) {
+            throw new Error("Please enter your full name.");
+        }
+
+        const userCredential = await signupWithEmailAndPassword(email, password, {
+            name: fullName,
+            role,
+        });
+
+        const user = userCredential.user;
+        await setDoc(doc(store, "users", user.uid), {
+            name: fullName,
+            email,
+            role,
+            createdAt: new Date(),
+        }, { merge: true });
+
+        statusMsg.classList.replace("alert-info", "alert-success");
+        statusMsg.textContent = "Account Created! Redirecting...";
+        setTimeout(() => {
+            window.location.href = "index.html";
+        }, 1200);
     } catch (error) {
-        console.error("Error:", error);
-        alert("Server error");
+        console.error(error);
+        statusMsg.classList.replace("alert-info", "alert-danger");
+        statusMsg.textContent = formatErrorMessage(error?.message || "Request failed");
     }
+});
+
+function formatErrorMessage(message) {
+    const msg = String(message || "");
+    if (msg.includes("Email already exists")) return "Email is already registered.";
+    if (msg.includes("Invalid credentials")) return "Invalid Email or Password.";
+    if (msg.includes("weak-password")) return "Password should be at least 6 characters.";
+    return msg;
 }

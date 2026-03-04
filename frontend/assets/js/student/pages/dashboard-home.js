@@ -2,15 +2,11 @@
             window.location.replace("../index.html");
         }
 
-        import { initializeApp } from "../../lib/firebase-app-compat.js";
-        import { getAuth, onAuthStateChanged } from "../../lib/firebase-auth-compat.js";
-        import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } from "../../lib/firebase-firestore-compat.js";
+        import { getAuth, onAuthStateChanged } from "../../lib/auth-store.js";
+        import { getDataStore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } from "../../lib/data-store.js";
 
-        const firebaseConfig = {};
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const auth = getAuth();
+        const db = getDataStore();
         const marksEditor = document.getElementById("marks-editor");
         const marksEmptyState = document.getElementById("marks-empty-state");
         const marksStatus = document.getElementById("marks-status");
@@ -282,9 +278,27 @@
             await loadLearningRecommendations(normalized);
         }
 
+        function normalizeRiskLevel(riskLevel) {
+            const normalized = String(riskLevel || "")
+                .trim()
+                .toUpperCase()
+                .replace(/\s+/g, " ");
+            return normalized;
+        }
+
+        function inferRiskFromScore(score) {
+            if (!Number.isFinite(score)) return "";
+            if (score >= 80) return "LOW";
+            if (score >= 60) return "BALANCED";
+            if (score >= 40) return "MEDIUM";
+            if (score >= 20) return "HIGH";
+            return "VERY HIGH";
+        }
+
         function applyRiskBadge(riskLevel) {
             const riskBadge = document.getElementById("risk-level-badge");
-            riskBadge.textContent = `Risk: ${riskLevel || "--"}`;
+            const normalizedRisk = normalizeRiskLevel(riskLevel);
+            riskBadge.textContent = `Risk: ${normalizedRisk || "--"}`;
             riskBadge.classList.remove(
                 "text-danger",
                 "text-warning",
@@ -297,15 +311,15 @@
                 "text-white"
             );
 
-            if (riskLevel === "HIGH") {
+            if (normalizedRisk === "HIGH") {
                 riskBadge.classList.add("text-high");
-            } else if (riskLevel === "MEDIUM") {
+            } else if (normalizedRisk === "MEDIUM") {
                 riskBadge.classList.add("text-medium");
-            } else if (riskLevel === "LOW") {
+            } else if (normalizedRisk === "LOW") {
                 riskBadge.classList.add("text-low");
-            } else if (riskLevel === "BALANCED") {
+            } else if (normalizedRisk === "BALANCED") {
                 riskBadge.classList.add("text-balanced");
-            } else if (riskLevel === "VERY HIGH") {
+            } else if (normalizedRisk === "VERY HIGH") {
                 riskBadge.classList.add("text-veryhigh");
             } else {
                 riskBadge.classList.add("text-white");
@@ -315,6 +329,7 @@
         function applyPredictionCardGradient(riskLevel) {
             const predictionCard = document.getElementById("prediction-card");
             if (!predictionCard) return;
+            const normalizedRisk = normalizeRiskLevel(riskLevel);
 
             predictionCard.classList.remove(
                 "gradient-card-low",
@@ -324,15 +339,15 @@
                 "gradient-card-very-high"
             );
 
-            if (riskLevel === "LOW") {
+            if (normalizedRisk === "LOW") {
                 predictionCard.classList.add("gradient-card-low");
-            } else if (riskLevel === "BALANCED") {
+            } else if (normalizedRisk === "BALANCED") {
                 predictionCard.classList.add("gradient-card-balanced");
-            } else if (riskLevel === "MEDIUM") {
+            } else if (normalizedRisk === "MEDIUM") {
                 predictionCard.classList.add("gradient-card-medium");
-            } else if (riskLevel === "HIGH") {
+            } else if (normalizedRisk === "HIGH") {
                 predictionCard.classList.add("gradient-card-high");
-            } else if (riskLevel === "VERY HIGH") {
+            } else if (normalizedRisk === "VERY HIGH") {
                 predictionCard.classList.add("gradient-card-very-high");
             } else {
                 predictionCard.classList.add("gradient-card-low");
@@ -344,11 +359,15 @@
             if (!predictedScore) return;
 
             const score = extractPredictedScore(docData);
+            const resolvedRisk = normalizeRiskLevel(
+                docData?.risk_level ?? docData?.riskLevel
+            ) || inferRiskFromScore(score);
+
             predictedScore.textContent = Number.isFinite(score) ? `${score.toFixed(1)}%` : "No prediction yet";
             predictedScore.classList.add("text-dark");
 
-            applyRiskBadge(docData?.risk_level);
-            applyPredictionCardGradient(docData?.risk_level);
+            applyRiskBadge(resolvedRisk);
+            applyPredictionCardGradient(resolvedRisk);
         }
 
         function renderPeerComparison(myScore, peerAverage, peerCount) {

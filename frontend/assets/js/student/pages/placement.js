@@ -1,9 +1,7 @@
-import { initializeApp } from "../../lib/firebase-app-compat.js";
-import { getAuth, onAuthStateChanged } from "../../lib/firebase-auth-compat.js";
-import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "../../lib/firebase-firestore-compat.js";
+import { getAuth, onAuthStateChanged } from "../../lib/auth-store.js";
+import { getDataStore, doc, getDoc, setDoc, serverTimestamp } from "../../lib/data-store.js";
 
-const cfg={};
-const app=initializeApp(cfg),auth=getAuth(app),db=getFirestore(app);
+const auth=getAuth(),db=getDataStore();
 
 const S={user:null,userDoc:{},tracker:null,bench:null,timer:null};
 const N={

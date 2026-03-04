@@ -1,12 +1,8 @@
-        import { initializeApp } from "../../lib/firebase-app-compat.js";
-        import { getAuth, onAuthStateChanged } from "../../lib/firebase-auth-compat.js";
-        import { getFirestore, collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from "../../lib/firebase-firestore-compat.js";
+        import { getAuth, onAuthStateChanged } from "../../lib/auth-store.js";
+        import { getDataStore, collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from "../../lib/data-store.js";
 
-        const firebaseConfig = {};
-
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        const auth = getAuth();
+        const db = getDataStore();
 
         const API_BASES = [
             window.localStorage.getItem("apiBaseUrl"),
@@ -296,19 +292,31 @@
         });
         window.handlePrediction = handlePrediction;
 
+        function getScoreColor(score) {
+            if (score >= 80) return "#16a34a";
+            if (score >= 60) return "#2563eb";
+            if (score >= 40) return "#f59e0b";
+            return "#dc2626";
+        }
+
         function showResult(percentage) {
             const resultCard = document.getElementById("result-card");
             const scoreVal = document.getElementById("scoreValue");
             const circle = document.getElementById("scoreCircle");
+            const numericScore = Number(percentage);
+            const score = Number.isFinite(numericScore) ? numericScore : 0;
+            const accent = getScoreColor(score);
 
             resultCard.style.display = "block";
+            resultCard.style.borderTop = `5px solid ${accent}`;
 
             let start = 0;
-            let end = Math.min(Math.round(percentage), 100);
+            let end = Math.min(Math.round(score), 100);
 
             if (end <= 0) {
                 scoreVal.textContent = "0.0%";
-                circle.style.background = "conic-gradient(var(--primary-color) 0deg, #f0f0f0 0deg)";
+                scoreVal.style.color = accent;
+                circle.style.background = `conic-gradient(${accent} 0deg, #f0f0f0 0deg)`;
                 return;
             }
 
@@ -318,11 +326,12 @@
             const timer = setInterval(function () {
                 start++;
                 scoreVal.textContent = start + "%";
-                circle.style.background = `conic-gradient(var(--primary-color) ${start * 3.6}deg, #f0f0f0 0deg)`;
+                scoreVal.style.color = accent;
+                circle.style.background = `conic-gradient(${accent} ${start * 3.6}deg, #f0f0f0 0deg)`;
 
                 if (start >= end) {
                     clearInterval(timer);
-                    scoreVal.textContent = percentage + "%";
+                    scoreVal.textContent = `${score.toFixed(1)}%`;
                 }
             }, stepTime);
         }

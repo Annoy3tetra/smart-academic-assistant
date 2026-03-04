@@ -30,7 +30,7 @@ async function refreshCurrentUser() {
         if (authState.currentUser) {
             setSession(token, authState.currentUser);
         }
-    } catch (error) {
+    } catch {
         clearSession();
         authState.currentUser = null;
     }
@@ -58,7 +58,7 @@ export function onAuthStateChanged(auth, callback) {
     return () => listeners.delete(callback);
 }
 
-export async function signInWithEmailAndPassword(auth, email, password) {
+export async function loginWithEmailAndPassword(email, password) {
     const data = await apiRequest("/students/login-json", {
         method: "POST",
         auth: false,
@@ -71,12 +71,12 @@ export async function signInWithEmailAndPassword(auth, email, password) {
     }
 
     setSession(data.access_token, user);
-    auth.currentUser = user;
+    authState.currentUser = user;
     emitAuthState();
     return { user };
 }
 
-export async function createUserWithEmailAndPassword(auth, email, password, profile = {}) {
+export async function signupWithEmailAndPassword(email, password, profile = {}) {
     const name = String(profile?.name || email.split("@")[0] || "Student").trim();
     const role = String(profile?.role || "Student").trim();
 
@@ -92,7 +92,7 @@ export async function createUserWithEmailAndPassword(auth, email, password, prof
     }
 
     setSession(data.access_token, user);
-    auth.currentUser = user;
+    authState.currentUser = user;
     emitAuthState();
     return { user };
 }

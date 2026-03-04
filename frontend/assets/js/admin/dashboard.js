@@ -1,12 +1,8 @@
-    import { initializeApp } from "../lib/firebase-app-compat.js";
-    import { getAuth, onAuthStateChanged, signOut } from "../lib/firebase-auth-compat.js";
-    import { getFirestore, collection, getDocs, query, where, doc, getDoc, setDoc, addDoc, deleteDoc, serverTimestamp } from "../lib/firebase-firestore-compat.js";
+    import { getAuth, onAuthStateChanged, signOut } from "../lib/auth-store.js";
+    import { getDataStore, collection, getDocs, query, where, doc, getDoc, setDoc, addDoc, deleteDoc, serverTimestamp } from "../lib/data-store.js";
 
-    const firebaseConfig = {};
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    const auth = getAuth();
+    const db = getDataStore();
 
     const State = {
       me: null,

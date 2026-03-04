@@ -591,3 +591,10 @@
             line-height: 1.65;
             font-size: 0.96rem;
         }
+
+/* Ensure dashboard prediction gradients override generic .custom-card background */
+#prediction-card.gradient-card-low { background: linear-gradient(135deg, #8fd884 0%, #48db27 100%) !important; }
+#prediction-card.gradient-card-balanced { background: linear-gradient(135deg, hsl(62, 85%, 74%) 0%, #e2f208 100%) !important; }
+#prediction-card.gradient-card-medium { background: linear-gradient(135deg, #8b86c1 0%, #3518da 100%) !important; }
+#prediction-card.gradient-card-high { background: linear-gradient(135deg, #eca817 0%, #f4c311 100%) !important; }
+#prediction-card.gradient-card-very-high { background: linear-gradient(135deg, #c08c7e 0%, #d13013 100%) !important; }

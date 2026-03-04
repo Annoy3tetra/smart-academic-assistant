@@ -8,8 +8,8 @@ function isIsoDateString(value) {
 
 function shouldWrapAsTimestamp(key, value) {
     if (!isIsoDateString(value)) return false;
-    const k = String(key || "");
-    return /(_at|At)$/i.test(k);
+    const normalized = String(key || "");
+    return /(_at|At)$/i.test(normalized);
 }
 
 function makeTimestamp(value) {
@@ -68,7 +68,7 @@ function normalizeWriteValue(value) {
     return value;
 }
 
-class CompatDocSnapshot {
+class AppDocSnapshot {
     constructor(id, data, exists) {
         this.id = id;
         this._data = data ?? {};
@@ -84,14 +84,14 @@ class CompatDocSnapshot {
     }
 }
 
-class CompatQuerySnapshot {
+class AppQuerySnapshot {
     constructor(documents) {
         this.docs = documents;
         this.empty = documents.length === 0;
     }
 
     forEach(callback) {
-        this.docs.forEach((doc) => callback(doc));
+        this.docs.forEach((docSnap) => callback(docSnap));
     }
 }
 
@@ -103,7 +103,7 @@ function buildDocPath(docRef) {
     return `/data/docs/${encodeURIComponent(docRef.collection)}/${encodeURIComponent(docRef.id)}`;
 }
 
-export function getFirestore() {
+export function getDataStore() {
     return {};
 }
 
@@ -140,8 +140,8 @@ export function query(collectionRef, ...constraints) {
 }
 
 export async function getDoc(docRef) {
-    const data = await apiRequest(buildDocPath(docRef), { method: "GET", auth: true });
-    return new CompatDocSnapshot(docRef.id, data?.data ?? {}, data?.exists);
+    const response = await apiRequest(buildDocPath(docRef), { method: "GET", auth: true });
+    return new AppDocSnapshot(docRef.id, response?.data ?? {}, response?.exists);
 }
 
 export async function setDoc(docRef, data, options = {}) {
@@ -149,12 +149,11 @@ export async function setDoc(docRef, data, options = {}) {
         data: normalizeWriteValue(data ?? {}),
         merge: Boolean(options?.merge),
     };
-    const response = await apiRequest(buildDocPath(docRef), {
+    return apiRequest(buildDocPath(docRef), {
         method: "PUT",
         auth: true,
         body: payload,
     });
-    return response;
 }
 
 export async function addDoc(collectionRef, data) {
@@ -163,9 +162,7 @@ export async function addDoc(collectionRef, data) {
         auth: true,
         body: { data: normalizeWriteValue(data ?? {}) },
     });
-    return {
-        id: response?.id,
-    };
+    return { id: response?.id };
 }
 
 export async function getDocs(ref) {
@@ -173,7 +170,7 @@ export async function getDocs(ref) {
     if (ref?.type === "collection") {
         path = buildCollectionPath(ref);
     } else if (ref?.type === "query") {
-        const whereConstraint = (ref.constraints || []).find((c) => c?.type === "where");
+        const whereConstraint = (ref.constraints || []).find((item) => item?.type === "where");
         const params = new URLSearchParams();
         if (whereConstraint) {
             params.set("where_field", whereConstraint.fieldPath);
@@ -188,9 +185,8 @@ export async function getDocs(ref) {
 
     const response = await apiRequest(path, { method: "GET", auth: true });
     const docs = Array.isArray(response?.documents) ? response.documents : [];
-
-    return new CompatQuerySnapshot(
-        docs.map((item) => new CompatDocSnapshot(item.id, item.data ?? {}, true))
+    return new AppQuerySnapshot(
+        docs.map((item) => new AppDocSnapshot(item.id, item.data ?? {}, true))
     );
 }
 
@@ -215,7 +211,7 @@ export function onSnapshot(docRef, onNext, onError) {
             const serialized = JSON.stringify(response?.data ?? null);
             if (serialized !== lastSerialized) {
                 lastSerialized = serialized;
-                onNext(new CompatDocSnapshot(docRef.id, response?.data ?? {}, response?.exists));
+                onNext(new AppDocSnapshot(docRef.id, response?.data ?? {}, response?.exists));
             }
         } catch (error) {
             if (typeof onError === "function") {
@@ -226,8 +222,7 @@ export function onSnapshot(docRef, onNext, onError) {
 
     tick();
     const timer = window.setInterval(() => {
-        if (stopped) return;
-        tick();
+        if (!stopped) tick();
     }, 4000);
 
     return () => {
