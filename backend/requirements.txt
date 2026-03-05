@@ -19,6 +19,3 @@ numpy
 pandas
 scikit-learn
 joblib
-
-sentence-transformers
-faiss-cpu
