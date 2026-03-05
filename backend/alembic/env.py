@@ -1,14 +1,15 @@
 from logging.config import fileConfig
 from app.core.config import DATABASE_URL
 from app.core.database import Base
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 import os
 import sys
 from alembic import context
 from app.models import *
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 config = context.config
 config.set_main_option("sqlalchemy.url", DATABASE_URL)

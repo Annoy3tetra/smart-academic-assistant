@@ -1,0 +1,2 @@
+import secret
+print(secret.token_hex(32))
