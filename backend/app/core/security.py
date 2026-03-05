@@ -3,10 +3,11 @@ from jose import JWTError, jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
+import os
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/students/login")
 
-SECRET_KEY = "supersecretkey"
+SECRET_KEY = os.getenv("SECRET_KEY")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
