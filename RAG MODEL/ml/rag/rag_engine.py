@@ -3,7 +3,9 @@ import pickle
 import io
 import contextlib
 import numpy as np
-from sentence_transformers import SentenceTransformer
+from backend.app.core.config import USE_LLM
+if USE_LLM:
+    from sentence_transformers import SentenceTransformer
 # the google-genai client package provides `google.genai` and submodules.
 # install via `pip install google-genai-client` (or `google-genai` depending on version).
 # we import APIError separately so it can be referenced in exception handling.
