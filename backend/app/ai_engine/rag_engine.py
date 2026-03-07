@@ -54,9 +54,12 @@ def _build_prompt(query: str, context_chunks: list[str]) -> str:
 @lru_cache(maxsize=1)
 def _get_vector_store() -> FaissVectorStore:
     store = FaissVectorStore(index_path=RAG_INDEX_PATH, chunks_path=RAG_CHUNKS_PATH)
+
     if not store.load():
-        source_chunks = _load_source_chunks(RAG_SOURCE_FILE)
-        store.build(source_chunks)
+        raise RuntimeError(
+            "FAISS index not found. Build the index locally before deploying."
+        )
+
     return store
 
 
