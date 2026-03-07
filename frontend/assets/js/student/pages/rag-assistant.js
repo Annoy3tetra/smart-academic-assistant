@@ -1,8 +1,6 @@
-        const API_BASES = [
-            window.localStorage.getItem("apiBaseUrl"),
-            "http://127.0.0.1:8000",
-            "http://localhost:8000"
-        ].filter(Boolean);
+        import { getApiBases } from "../../lib/backend-client.js";
+
+        const API_BASES = getApiBases();
 
         const queryInput = document.getElementById("query");
         const askBtn = document.getElementById("ask-btn");

@@ -4,6 +4,7 @@
 
         import { getAuth, onAuthStateChanged } from "../../lib/auth-store.js";
         import { getDataStore, collection, getDocs, query, where, doc, getDoc, setDoc, serverTimestamp } from "../../lib/data-store.js";
+        import { getApiBases } from "../../lib/backend-client.js";
 
         const auth = getAuth();
         const db = getDataStore();
@@ -15,11 +16,7 @@
         const learningEmptyState = document.getElementById("learning-empty-state");
         const weakSubjectsChip = document.getElementById("weak-subjects-chip");
         const recommendationModelLabel = document.getElementById("recommendation-model-label");
-        const API_BASES = [
-            window.localStorage.getItem("apiBaseUrl"),
-            "http://127.0.0.1:8000",
-            "http://localhost:8000"
-        ].filter(Boolean);
+        const API_BASES = getApiBases();
         let currentUserId = null;
 
         function setGreeting(user, userData) {

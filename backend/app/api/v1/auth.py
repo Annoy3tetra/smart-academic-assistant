@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, EmailStr, Field
-from sqlalchemy.exc import IntegrityError
+from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
@@ -11,6 +11,13 @@ router = APIRouter(
     prefix="/students",
     tags=["Auth"],
 )
+
+
+def _db_unavailable_error(err: Exception) -> HTTPException:
+    return HTTPException(
+        status_code=503,
+        detail="Database unavailable. Verify DATABASE_URL and SSL settings.",
+    )
 
 
 class SignupRequest(BaseModel):
@@ -105,7 +112,11 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
     email = payload.email.strip().lower()
     role = _normalize_db_role(payload.role)
 
-    existing = db.query(User).filter(User.email == email).first()
+    try:
+        existing = db.query(User).filter(User.email == email).first()
+    except SQLAlchemyError as err:
+        raise _db_unavailable_error(err) from err
+
     if existing:
         raise HTTPException(status_code=400, detail="Email already exists")
 
@@ -123,6 +134,9 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
     except IntegrityError:
         db.rollback()
         raise HTTPException(status_code=400, detail="Email already exists")
+    except SQLAlchemyError as err:
+        db.rollback()
+        raise _db_unavailable_error(err) from err
 
     _ensure_student_record(db, user)
     _ensure_user_doc(db, user)
@@ -141,7 +155,12 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
 @router.post("/login-json")
 def login_json(payload: LoginRequest, db: Session = Depends(get_db)):
     email = payload.email.strip().lower()
-    user = db.query(User).filter(User.email == email).first()
+
+    try:
+        user = db.query(User).filter(User.email == email).first()
+    except SQLAlchemyError as err:
+        raise _db_unavailable_error(err) from err
+
     if not user:
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
@@ -163,7 +182,11 @@ def login_json(payload: LoginRequest, db: Session = Depends(get_db)):
 
 @router.get("/me")
 def me(current_user: dict = Depends(get_current_user), db: Session = Depends(get_db)):
-    user = db.query(User).filter(User.id == current_user["user_id"]).first()
+    try:
+        user = db.query(User).filter(User.id == current_user["user_id"]).first()
+    except SQLAlchemyError as err:
+        raise _db_unavailable_error(err) from err
+
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
 

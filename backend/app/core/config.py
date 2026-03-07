@@ -1,5 +1,6 @@
 import os
 from pathlib import Path
+from urllib.parse import parse_qsl, urlencode, urlparse, urlunparse
 
 from dotenv import load_dotenv
 
@@ -10,8 +11,34 @@ load_dotenv(ENV_FILE)
 
 DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
 
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+def _normalize_database_url(raw_url: str) -> str:
+    url = str(raw_url or "").strip()
+
+    if url.startswith("postgres://"):
+        url = url.replace("postgres://", "postgresql://", 1)
+
+    if not url:
+        return url
+
+    parsed = urlparse(url)
+    query = dict(parse_qsl(parsed.query, keep_blank_values=True))
+
+    host = (parsed.hostname or "").strip().lower()
+    is_local = host in {"localhost", "127.0.0.1"} or host.endswith(".local")
+
+    # Managed cloud Postgres providers generally require TLS in production.
+    if not is_local and "sslmode" not in query:
+        query["sslmode"] = os.getenv("DB_SSLMODE", "require").strip() or "require"
+
+    if "connect_timeout" not in query:
+        query["connect_timeout"] = os.getenv("DB_CONNECT_TIMEOUT", "10").strip() or "10"
+
+    normalized_query = urlencode(query)
+    return urlunparse(parsed._replace(query=normalized_query))
+
+
+DATABASE_URL = _normalize_database_url(DATABASE_URL)
 
 if not DATABASE_URL:
     raise RuntimeError(

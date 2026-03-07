@@ -1,14 +1,11 @@
         import { getAuth, onAuthStateChanged } from "../../lib/auth-store.js";
         import { getDataStore, collection, addDoc, serverTimestamp, doc, getDoc, setDoc } from "../../lib/data-store.js";
+        import { getApiBases } from "../../lib/backend-client.js";
 
         const auth = getAuth();
         const db = getDataStore();
 
-        const API_BASES = [
-            window.localStorage.getItem("apiBaseUrl"),
-            "http://127.0.0.1:8000",
-            "http://localhost:8000"
-        ].filter(Boolean);
+        const API_BASES = getApiBases();
 
         async function savePredictionToUserCollection(prediction, inputData) {
             const user = auth.currentUser;

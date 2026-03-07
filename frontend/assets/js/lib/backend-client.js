@@ -1,12 +1,21 @@
 const TOKEN_KEY = "edumint_jwt_token";
 const USER_KEY = "edumint_auth_user";
+const DEFAULT_API_BASE = "https://smart-academic-assistant-backend.onrender.com";
 
-function getApiBases() {
-    return [
+function normalizeBase(base) {
+    const value = String(base || "").trim();
+    return value.replace(/\/+$/, "");
+}
+
+export function getApiBases() {
+    const candidates = [
         window.localStorage.getItem("apiBaseUrl"),
+        DEFAULT_API_BASE,
         "http://127.0.0.1:8000",
         "http://localhost:8000",
-    ].filter(Boolean);
+    ].map(normalizeBase).filter(Boolean);
+
+    return [...new Set(candidates)];
 }
 
 function safeJsonParse(raw, fallback = null) {
