@@ -17,7 +17,6 @@ from app.crud import student_crud,user_crud,analytics_crud
 from app.ai_engine.performance_predictor import predict_performance
 from app.ai_engine.placement_model import evaluate_placement_readiness
 from app.ai_engine.course_recommender import recommend_courses as recommend_courses_local
-from app.ai_engine.rag_engine import generate_answer, get_rag_diagnostics
 from app.models.user import Prediction, User
 from app.core.security import verify_password, create_access_token, get_current_user, hash_password
 from sqlalchemy.exc import IntegrityError
@@ -176,6 +175,8 @@ def recommend_courses_endpoint(payload: CourseRecommendationRequest):
 
 @router.post("/rag-query")
 def rag_query(payload: RagQueryRequest):
+    from app.ai_engine.rag_engine import generate_answer
+
     query = payload.query.strip()
     if not query:
         raise HTTPException(status_code=422, detail="Query cannot be empty")
@@ -193,6 +194,8 @@ def rag_query(payload: RagQueryRequest):
 
 @router.get("/rag-test")
 def rag_test(query: str = "Explain recursion in simple terms"):
+    from app.ai_engine.rag_engine import generate_answer, get_rag_diagnostics
+
     try:
         answer = generate_answer(query)
         diagnostics = get_rag_diagnostics()

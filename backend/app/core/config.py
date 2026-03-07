@@ -34,6 +34,7 @@ def _resolve_path(raw_path: str, base_dir: Path) -> Path:
 
 
 USE_LLM = os.getenv("USE_LLM", "false").lower() == "true"
+AUTO_CREATE_TABLES = os.getenv("AUTO_CREATE_TABLES", "false").lower() == "true"
 RAG_TOP_K = int(os.getenv("RAG_TOP_K", "3"))
 
 RAG_DATA_DIR = _resolve_path(

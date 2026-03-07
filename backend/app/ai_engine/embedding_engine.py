@@ -1,14 +1,14 @@
 from functools import lru_cache
 
 import numpy as np
-from sentence_transformers import SentenceTransformer
 
 
 MODEL_NAME = "all-MiniLM-L6-v2"
 
 
 @lru_cache(maxsize=1)
-def _get_model() -> SentenceTransformer:
+def _get_model():
+    from sentence_transformers import SentenceTransformer
     return SentenceTransformer(MODEL_NAME)
 
 

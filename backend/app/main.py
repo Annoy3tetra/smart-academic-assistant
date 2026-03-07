@@ -2,6 +2,7 @@ from fastapi import FastAPI
 from app.core.database import Base,engine,get_db
 from app.api.v1 import user, auth, data_store
 from fastapi.middleware.cors import CORSMiddleware
+from app.core.config import AUTO_CREATE_TABLES
 
 
 app = FastAPI()
@@ -23,4 +24,11 @@ app.include_router(data_store.router)
 
 @app.on_event("startup")
 def ensure_tables():
+    if not AUTO_CREATE_TABLES:
+        return
     Base.metadata.create_all(bind=engine)
+
+
+@app.get("/healthz")
+def healthz():
+    return {"ok": True}
