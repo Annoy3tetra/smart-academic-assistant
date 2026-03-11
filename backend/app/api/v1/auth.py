@@ -14,6 +14,13 @@ router = APIRouter(
 
 
 def _db_unavailable_error(err: Exception) -> HTTPException:
+    msg = str(getattr(err, "orig", err) or "").lower()
+    if "does not exist" in msg or "undefined table" in msg:
+        return HTTPException(
+            status_code=503,
+            detail="Database schema is not initialized. Run migrations or enable AUTO_CREATE_TABLES.",
+        )
+
     return HTTPException(
         status_code=503,
         detail="Database unavailable. Verify DATABASE_URL and SSL settings.",

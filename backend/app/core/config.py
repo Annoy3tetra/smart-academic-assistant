@@ -61,8 +61,19 @@ def _resolve_path(raw_path: str, base_dir: Path) -> Path:
 
 
 USE_LLM = os.getenv("USE_LLM", "false").lower() == "true"
-AUTO_CREATE_TABLES = os.getenv("AUTO_CREATE_TABLES", "false").lower() == "true"
 RAG_TOP_K = int(os.getenv("RAG_TOP_K", "3"))
+
+
+def _env_bool(name: str, default: bool) -> bool:
+    raw = os.getenv(name)
+    if raw is None:
+        return default
+    return str(raw).strip().lower() in {"1", "true", "yes", "on"}
+
+
+# Default to creating missing tables on startup so first deploy works
+# without requiring a separate migration step.
+AUTO_CREATE_TABLES = _env_bool("AUTO_CREATE_TABLES", True)
 
 RAG_DATA_DIR = _resolve_path(
     os.getenv("RAG_DATA_DIR", "backend/app/ai_engine/data"),

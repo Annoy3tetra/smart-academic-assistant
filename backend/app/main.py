@@ -3,6 +3,7 @@ from app.core.database import Base,engine,get_db
 from app.api.v1 import user, auth, data_store
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import AUTO_CREATE_TABLES
+from app.models import user as user_models  # noqa: F401
 
 
 app = FastAPI()
