@@ -7,12 +7,44 @@ function normalizeBase(base) {
     return value.replace(/\/+$/, "");
 }
 
+function isLocalHostname(hostname) {
+    const normalized = String(hostname || "").toLowerCase();
+    return normalized === "localhost" || normalized === "127.0.0.1" || normalized === "[::1]";
+}
+
+function isLocalApiBase(base) {
+    try {
+        const parsed = new URL(base);
+        return isLocalHostname(parsed.hostname);
+    } catch {
+        return false;
+    }
+}
+
 export function getApiBases() {
+    const runningLocally = isLocalHostname(window.location.hostname);
+    const rawCustomBase = normalizeBase(window.localStorage.getItem("apiBaseUrl"));
+    const customBase = (!runningLocally && isLocalApiBase(rawCustomBase)) ? "" : rawCustomBase;
+    const defaultBase = normalizeBase(DEFAULT_API_BASE);
+
+    if (!runningLocally && rawCustomBase && !customBase) {
+        window.localStorage.removeItem("apiBaseUrl");
+    }
+
+    const remoteBases = [customBase, defaultBase]
+        .filter(Boolean)
+        .filter((base) => !isLocalApiBase(base) || runningLocally);
+
+    const localBases = runningLocally
+        ? [
+            "http://127.0.0.1:8000",
+            "http://localhost:8000",
+        ]
+        : [];
+
     const candidates = [
-        window.localStorage.getItem("apiBaseUrl"),
-        DEFAULT_API_BASE,
-        "http://127.0.0.1:8000",
-        "http://localhost:8000",
+        ...remoteBases,
+        ...localBases,
     ].map(normalizeBase).filter(Boolean);
 
     return [...new Set(candidates)];
