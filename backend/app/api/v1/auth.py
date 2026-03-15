@@ -21,9 +21,15 @@ def _db_unavailable_error(err: Exception) -> HTTPException:
             detail="Database schema is not initialized. Run migrations or enable AUTO_CREATE_TABLES.",
         )
 
+    if "network is unreachable" in msg and "supabase.co" in msg:
+        return HTTPException(
+            status_code=503,
+            detail="Database unavailable. Render could not reach the direct Supabase host. Use the Supavisor pooler/IPv4 DATABASE_URL.",
+        )
+
     return HTTPException(
         status_code=503,
-        detail="Database unavailable. Verify DATABASE_URL and SSL settings.",
+        detail="Database unavailable. Verify DATABASE_URL, SSL settings, and that the PostgreSQL host is reachable.",
     )
 
 
