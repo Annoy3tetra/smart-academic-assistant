@@ -17,11 +17,24 @@ logger = logging.getLogger(__name__)
 
 app = FastAPI()
 
+_DEFAULT_ORIGINS = [
+    "https://smart-academic-assistant-lilac.vercel.app",
+    "http://localhost:5500",
+    "http://127.0.0.1:5500",
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+_extra = os.getenv("ALLOWED_ORIGINS", "")
+ALLOWED_ORIGINS = [
+    o.strip() for o in (_extra.split(",") if _extra.strip() else [])
+] or _DEFAULT_ORIGINS
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
-    allow_origins=["*"],
+    allow_origins=ALLOWED_ORIGINS,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
